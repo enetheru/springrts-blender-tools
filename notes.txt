@@ -1,0 +1,43 @@
+seperate parts of any blender integration
+
+== Map Creation ==
+* Terrain Sculpting
+  - incline visualisation
+  - build aera visualisation
+  - Water Visualisation
+* Terrain Texture Generation
+  - Height
+  - Diffuse
+  - Specular
+  - Normal
+  - Splat
+  - Grass
+  - Metal
+  - Minimap
+* Feature placement
+* Lighting
+
+== Features ==
+* Modeling
+* Animations
+* Materials
+* Export
+* Import
+
+== Units ==
+* Modeling
+* Animations
+* Materials
+* Import
+* Export
+
+= tools =
+* randomise z rotations for selected objects
+* randomise object data for selected objects
+
+== Naming Scheme ==
+
+SpringRTS
+ map
+  features
+ feature

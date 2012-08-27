@@ -1,0 +1,17 @@
+Issues
+* test for valid UV Map
+  Create one using any method if it doesnt exist.
+* Invert UV map on export and restore
+* FIX Height Radius and Midpoint Cals for ./objects3d/object.lua
+* Solve texture selection and saving issue
+  This one can be solved by using normal textures and then using the
+  compositor to split and merge them to the required output.
+
+further TODO
+* Create Dynamic Colission Volume tools
+  The vision is that you will turn on the visual and be able to edit
+  it as a 3d object in the 3d view automatically updating the values
+  in the scene properties
+* Create footprint visualiser
+  will show a quad that resizes controlled by the values in the scene
+  properties.

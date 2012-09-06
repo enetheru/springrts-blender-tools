@@ -13,6 +13,8 @@ Try not to overwrite files without checking first
 == Error when attempting to use auto functions with no root node defined ==
 need to make this much cleaner
 == Copy occlusion volume to Collision Volume button ==
+doesnt seem to be right
+doesnt seem to be right
 
 = Notes =
 == UV Invert ==

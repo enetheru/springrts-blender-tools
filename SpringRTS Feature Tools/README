@@ -1,0 +1,32 @@
+= SpringRTS Feature Tools=
+= VERSION 0.2 =
+= AUTHOR =
+Enetheru, Samuel Nicholas, nicholas.samuel@gmail.com
+= Issues/ToDo =
+== Test for UV Map==
+Create one using any method if it doesnt exist.
+== Check before clobber ==
+Try not to overwrite files without checking first
+== Manual texture image work==
+* remove the need to edit the text files after export.
+* write image conversion using imagemagick into the python so that work can be done purely in blender.
+== Error when attempting to use auto functions with no root node defined ==
+need to make this much cleaner
+== Copy occlusion volume to Collision Volume button ==
+
+= Notes =
+== UV Invert ==
+The UV Coordinates used in spring are inverted on the Y axis compared
+to blender, You have two options to resolve the difference, invert the
+UV Coords before exporting, or invert the images. My preference is to
+invert the images as they require processing to get the channels in
+the right order.
+I have a composite node setup to do all the required operations,
+or I have a shell script using imagemagick.
+I want to put it into the blender interface though so python.
+
+== Conversion to and from coordinate space ==
+from Blender's XYZ -> spring needs to use (X)(Z)(-Y)
+from Spring's XYZ -> blender needs to use (X)(-Z)(Y)
+The Custom properties are defined in Spring's Coordinates, so that
+transferring to text will make more sense.

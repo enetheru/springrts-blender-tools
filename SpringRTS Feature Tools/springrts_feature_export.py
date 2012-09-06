@@ -325,7 +325,7 @@ def write_obj(context, filepath):
     #midpos
     try:
         f.write("\tmidpos = {" +
-            str(round(context.scene.midpos[0],3)) * -1 + ", " +
+            str(round(context.scene.midpos[0],3)) + ", " +
             str(round(context.scene.midpos[1],3)) + ", " +
             str(round(context.scene.midpos[2],3)) + "},\n")
     except AttributeError:

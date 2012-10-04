@@ -10,11 +10,16 @@ Try not to overwrite files without checking first
 == Manual texture image work==
 * remove the need to edit the text files after export.
 * write image conversion using imagemagick into the python so that work can be done purely in blender.
-== Error when attempting to use auto functions with no root node defined ==
-need to make this much cleaner
 == Copy occlusion volume to Collision Volume button ==
 doesnt seem to be right
-doesnt seem to be right
+== dont export occlusion,collision and footprint==
+this may be able to be done by not parenting the root node, still to be sorted out.
+
+== Spring Crash when object names are in upper case==
+need to tolower all names before or during export
+
+== allow setting texture name in blender so exports correctly==
+rather than have to copy the txt files every time, sort of a temporary work around till texture exporting at the same time works.
 
 = Notes =
 == UV Invert ==

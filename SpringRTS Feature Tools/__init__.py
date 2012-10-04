@@ -263,6 +263,14 @@ def register():
 #    bpy.utils.register_class(SpringRTSFeatureCalculateHeight)
     bpy.utils.register_class(SpringRTSFeatureCalculateMidpos)
 
+# Texture Image Values
+    bpy.types.Scene.tex1 = bpy.props.StringProperty(
+        name = "tex1",
+        description = "RGB diffuse and team overlay")
+
+    bpy.types.Scene.tex2 = bpy.props.StringProperty(
+        name = "tex2",
+        description = "ambient, specular, unused and alpha")
 
 # Occlusion Volume
     bpy.types.Scene.occlusionVolume = bpy.props.BoolProperty(

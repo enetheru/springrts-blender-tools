@@ -3,8 +3,6 @@
 = AUTHOR =
 Enetheru, Samuel Nicholas, nicholas.samuel@gmail.com
 = Issues/ToDo =
-== Test for UV Map==
-Create one using any method if it doesnt exist.
 == Check before clobber ==
 Try not to overwrite files without checking first
 == Manual texture image work==

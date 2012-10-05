@@ -313,8 +313,10 @@ def export(context, filepath):
         raise RuntimeError("You need to make sure to set the root node")
         return {'FINISHED'}
 
-    # FIXME Check if UV Maps are defined for all objects
-    # this should be recursive and generate uv maps if it cannot find a uvmap
+    # Check if UV Maps are defined for all objects
+    if check_uvmaps(context.scene.objects[context.scene.root]):
+        raise RuntimeError("not all objects have UV Maps defined")
+        return {'FINISHED'}
 
     print("Creating Directory Structure")
     #create base directory
@@ -329,3 +331,15 @@ def export(context, filepath):
     # write images
     write_images(context, filepath)
     return {'FINISHED'}
+
+def check_uvmaps(node):
+    nouvmap = False
+    if node.data.uv_textures.active == None:
+        print("%s has no uv map defined\n" % node.data.name)
+        nouvmap = True
+
+    for j in node.children:
+        childuvmap = check_uvmaps(j)
+        nouvmap = nouvmap or childuvmap
+
+    return nouvmap

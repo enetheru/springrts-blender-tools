@@ -13,12 +13,6 @@ doesnt seem to be right
 == dont export occlusion,collision and footprint==
 this may be able to be done by not parenting the root node, still to be sorted out.
 
-== Spring Crash when object names are in upper case==
-need to tolower all names before or during export
-
-== allow setting texture name in blender so exports correctly==
-rather than have to copy the txt files every time, sort of a temporary work around till texture exporting at the same time works.
-
 = Notes =
 == UV Invert ==
 The UV Coordinates used in spring are inverted on the Y axis compared

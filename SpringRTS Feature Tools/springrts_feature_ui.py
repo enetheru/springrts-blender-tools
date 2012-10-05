@@ -144,7 +144,7 @@ def update_collision_volume(self, context):
         fcurve[0].driver.expression = "bpy.data.objects['SME_collisionvolume'].location.x - bpy.context.scene.midpos[0]"
         fcurve[1].driver.expression = "bpy.data.objects['SME_collisionvolume'].location.z - bpy.context.scene.midpos[1]"
         fcurve[2].driver.expression = "(bpy.data.objects['SME_collisionvolume'].location.y * -1) - bpy.context.scene.midpos[2]"
-        #Chave attributes
+        #Change attributes
         object.hide_select=False
         for lock in object.lock_location:
             lock=False
@@ -164,7 +164,7 @@ def update_collision_volume(self, context):
         object.scale.y = context.scene.collisionVolumeScales[2]
         object.scale.z = context.scene.collisionVolumeScales[1]
         object.location.x = context.scene.collisionVolumeOffsets[0] + context.scene.midpos[0]
-        object.location.y = (context.scene.collisionVolumeOffsets[2] + context.scene.mispos[2]) * -1
+        object.location.y = (context.scene.collisionVolumeOffsets[2] + context.scene.midpos[2]) * -1
         object.location.z = context.scene.collisionVolumeOffsets[1] + context.scene.midpos[1]
 
     return None

@@ -231,6 +231,7 @@ def create_SME_objects(self, context):
         object.show_name=True
         object.draw_type='WIRE'
         object.hide_render=True
+        object.hide = True
         for lock in object.lock_rotation:
             lock=True
 
@@ -279,6 +280,7 @@ def create_SME_objects(self, context):
         object.show_name=True
         object.draw_type='WIRE'
         object.hide_render=True
+        object.hide = True
         for lock in object.lock_rotation:
             lock=True
 
@@ -297,6 +299,7 @@ def create_SME_objects(self, context):
         object.hide_select=True
         object.show_name=True
         object.hide_render=True
+        object.hide = True
         for lock in object.lock_rotation:
             lock=True
         for lock in object.lock_scale:

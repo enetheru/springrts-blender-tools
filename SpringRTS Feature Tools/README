@@ -10,8 +10,6 @@ Try not to overwrite files without checking first
 * write image conversion using imagemagick into the python so that work can be done purely in blender.
 == Copy occlusion volume to Collision Volume button ==
 doesnt seem to be right
-== dont export occlusion,collision and footprint==
-this may be able to be done by not parenting the root node, still to be sorted out.
 
 = Notes =
 == UV Invert ==

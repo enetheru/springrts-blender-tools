@@ -103,7 +103,7 @@ class ExportSpringRTSFeature(Operator, ExportHelper):
 
     def execute(self, context):
         from . import springrts_feature_export
-        print("Export SpringRTS feature")
+        print("== Export SpringRTS feature ==")
         return springrts_feature_export.export(context, self.filepath)
 
 class SpringRTSFeatureAttributes(bpy.types.Panel):

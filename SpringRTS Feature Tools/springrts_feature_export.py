@@ -19,7 +19,7 @@
 import bpy,os,re
 
 def write_def(context, filepath):
-    print("Writing Feature Definition")
+    print("LOG: Writing Feature Definition")
     f = open(filepath + "/features/" + os.path.basename(filepath)
         + ".lua", 'w', encoding='utf-8')
     f.write("--// Feature Definition File\n")
@@ -33,42 +33,42 @@ def write_def(context, filepath):
     try:
         f.write("\tdescription = \"%s\",\n" % context.scene.description)
     except AttributeError:
-        print("description not specified, skipping.")
+        print("WARN: description not specified, skipping.")
 
     try:
         f.write("\tdamage = %.3f,\n" % context.scene.damage)
     except AttributeError:
-        print("damage not specified, skipping.")
+        print("WARN: damage not specified, skipping.")
 
     try:
         f.write("\tfeatureDead = \"%s\",\n" % context.scene.featureDead)
     except AttributeError:
-        print("featureDead not specified, skipping.")
+        print("WARN: featureDead not specified, skipping.")
 
     try:
         f.write("\tindestructable = %s,\n" % str(context.scene.indestructable).lower())
     except AttributeError:
-        print("indestructable not specified, skipping.")
+        print("WARN: indestructable not specified, skipping.")
     
     try:
         f.write("\tflammable = %s,\n" % str(context.scene.flammable).lower())
     except AttributeError:
-        print("flammable not specified, skipping.")
+        print("WARN: flammable not specified, skipping.")
 
     try:
         f.write("\tnoSelect = %s,\n" % str(context.scene.noSelect).lower())
     except AttributeError:
-        print("noSelect not specified, skipping.")
+        print("WARN: noSelect not specified, skipping.")
 
     try:
         f.write("\tmass = %.3f,\n" % context.scene.mass)
     except AttributeError:
-        print("mass not specified, skipping.")
+        print("WARN: mass not specified, skipping.")
 
     try:
         f.write("\tcrushResistance = %.3f,\n" % context.scene.crushResistance)
     except AttributeError:
-        print("crushResistance not specified, skipping.")
+        print("WARN: crushResistance not specified, skipping.")
 
     #Visual
     f.write("\n--// Visual\n")
@@ -79,7 +79,7 @@ def write_def(context, filepath):
     try:
         f.write("\tsmokeTime = %i,\n" % context.scene.smokeTime)
     except AttributeError:
-        print("smokeTime not specified, skipping.")
+        print("WARN: smokeTime not specified, skipping.")
 
     #Reclaim and Resource
     f.write("\n--// Reclaim & Resource\n")
@@ -87,27 +87,27 @@ def write_def(context, filepath):
     try:
         f.write("\treclaimable = %s,\n" % str(context.scene.reclaimable).lower())
     except AttributeError:
-        print("reclaimable not specified, skipping.")
+        print("WARN: reclaimable not specified, skipping.")
 
     try:
         f.write("\tautoReclaimable = %s,\n" % str(context.scene.noSelect).lower())
     except AttributeError:
-        print("autoReclaim not specified, skipping.")
+        print("WARN: autoReclaim not specified, skipping.")
 
     try:
         f.write("\treclaimTime = %.3f,\n" % context.scene.reclaimTime)
     except AttributeError:
-        print("reclaimTime not specified, skipping.")
+        print("WARN: reclaimTime not specified, skipping.")
 
     try:
         f.write("\tmetal = %.3f,\n" % context.scene.metal)
     except AttributeError:
-        print("metal not specified, skipping.")
+        print("WARN: metal not specified, skipping.")
 
     try:
         f.write("\tenergy = %.3f,\n" % context.scene.energy)
     except AttributeError:
-        print("energy not specified, skipping.")
+        print("WARN: energy not specified, skipping.")
 
     try:
         f.write("\tresurrectable = ")
@@ -119,12 +119,12 @@ def write_def(context, filepath):
             f.write("1")
         f.write(",\n")
     except AttributeError:
-        print("resurrectable not specified, skipping.")
+        print("WARN: resurrectable not specified, skipping.")
 
     try:
         f.write("\tgeoThermal = %s,\n" % str(context.scene.geoThermal).lower())
     except AttributeError:
-        print("geoThermal not specified, skipping.")
+        print("WARN: geoThermal not specified, skipping.")
 
     # Placement
     f.write("\n--// Placement\n",)
@@ -132,27 +132,27 @@ def write_def(context, filepath):
     try:
         f.write("\tfootprintX = %i,\n" % context.scene.footprintX)
     except AttributeError:
-        print("footprintX not specified, skipping.")
+        print("WARN: footprintX not specified, skipping.")
 
     try:
         f.write("\tfootprintZ = %i,\n" % context.scene.footprintZ)
     except AttributeError:
-        print("footprintY not specified, skipping.")
+        print("WARN: footprintY not specified, skipping.")
 
     try:
         f.write("\tblocking = %s,\n" % str(context.scene.blocking).lower())
     except AttributeError:
-        print("blocking not specified, skipping.")
+        print("WARN: blocking not specified, skipping.")
         
     try:
         f.write("\tupright = %s,\n" % str(context.scene.upright).lower())
     except AttributeError:
-        print("upright not specified, skipping.")
+        print("WARN: upright not specified, skipping.")
 
     try:
         f.write("\tfloating = %s,\n" % str(context.scene.floating).lower())
     except AttributeError:
-        print("floating not specified, skipping.")
+        print("WARN: floating not specified, skipping.")
 
     # Collision VOlumes
     f.write("\n--// Collision Volumes\n",)
@@ -169,7 +169,7 @@ def write_def(context, filepath):
         elif context.scene.collisionVolumeType == "SME_cylZ":
             ctype = "cylZ"
     except AttributeError:
-        print("collisionVolumeType not specified, skipping.")
+        print("WARN: collisionVolumeType not specified, skipping.")
     else:
         f.write("\tcollisionVolumeType = \"%s\",\n" % ctype)
 
@@ -179,7 +179,7 @@ def write_def(context, filepath):
             context.scene.collisionVolumeScales[1],
             context.scene.collisionVolumeScales[2]))
     except AttributeError:
-        print("collisionVolumeScales not specified, skipping.")
+        print("WARN: collisionVolumeScales not specified, skipping.")
 
     try:
         f.write("\tcollisionVolumeOffsets = {%.3f, %.3f, %.3f},\n" % (
@@ -187,7 +187,7 @@ def write_def(context, filepath):
             context.scene.collisionVolumeOffsets[1],
             context.scene.collisionVolumeOffsets[2],))
     except AttributeError:
-        print("collisionVolumeOffsets not specified, skipping.")
+        print("WARN: collisionVolumeOffsets not specified, skipping.")
 
     # Finished
     f.write("}\n")
@@ -228,30 +228,41 @@ def write_heirarchy(node,f,level, count):
     
 
 def write_obj(context, filepath):
-    #Preparing Scene for export
+    # Preparing Scene for export
+    # Rename objects to remove unrecognised characters
     for k in bpy.data.objects:
         k.name = re.sub('\.','_',k.name)
         k.data.name = re.sub('\.','_',k.data.name)
 
-    #Get the root node
-    try:
-        root_node = bpy.data.objects[context.scene.root]
-    except:
-        print("no root node defined")
+    # Get the root node
+    root_node = bpy.data.objects[context.scene.root]
+
     #FIXME So far i have no idea how to do this, so i'm going to leave it for now
-    print("Dont forget to invert the UV Map before exporting or at least"
-        "mirror your image in the Y direction")
+    print("NOTE: Dont forget to invert the UV Map before exporting or at least\n"
+        "\tmirror your image in the Y direction")
+
+    # Deselect all objects
+    bpy.ops.object.select_all(action='DESELECT')
+
+    # select the root node and make it active.
+    root_node.select = True
+    bpy.context.scene.objects.active = root_node
+
+    #select all the children of the root node.
+    for i in range(256):
+        bpy.ops.object.select_hierarchy(direction='CHILD', extend=True)
 
     #export obj file
-    print("Exporting mesh to obj format")
+    print("LOG: Exporting mesh to obj format")
     bpy.ops.export_scene.obj(
-        filepath=filepath+"/objects3d/"+os.path.basename(filepath)+".obj",
+        filepath="%s/objects3d/%s.obj" % (filepath,os.path.basename(filepath)),
+        use_selection = True,
         use_normals = True,
         use_materials = False,
         use_triangles = True)
 
     #write object heirarchy
-    print("Writing Feature Definition")
+    print("LOG: Writing Feature Definition")
     f = open(filepath + "/objects3d/" + os.path.basename(filepath)
         + ".lua", 'w', encoding='utf-8')
     f.write("--// Object Heirarchy File\n")
@@ -265,7 +276,7 @@ def write_obj(context, filepath):
     try:
         f.write("\tradius = %.3f,\n" %context.scene.radius)
     except AttributeError:
-        print("Damage not specified, skipping.")
+        print("WARN: Damage not specified, skipping.")
 
     #height
 #    try:
@@ -282,7 +293,7 @@ def write_obj(context, filepath):
             context.scene.midpos[1],
             context.scene.midpos[2]))
     except AttributeError:
-        print("Damage not specified, skipping.")
+        print("WARN: Damage not specified, skipping.")
 
     # textures
     f.write("\ttex1 = \"%s\",\n" % context.scene.tex1)
@@ -310,15 +321,15 @@ def write_images(context, filepath):
 def export(context, filepath):
     # check if root node exists
     if not context.scene.root in context.scene.objects:
-        raise RuntimeError("You need to make sure to set the root node")
+        raise RuntimeError("ERROR: You need to make sure to set the root node")
         return {'FINISHED'}
 
     # Check if UV Maps are defined for all objects
     if check_uvmaps(context.scene.objects[context.scene.root]):
-        raise RuntimeError("not all objects have UV Maps defined")
+        raise RuntimeError("ERROR: not all objects have UV Maps defined")
         return {'FINISHED'}
 
-    print("Creating Directory Structure")
+    print("LOG: Creating Directory Structure")
     #create base directory
     os.makedirs(filepath+"/features",exist_ok=True)
     os.makedirs(filepath+"/objects3d",exist_ok=True)
@@ -335,7 +346,7 @@ def export(context, filepath):
 def check_uvmaps(node):
     nouvmap = False
     if node.data.uv_textures.active == None:
-        print("%s has no uv map defined\n" % node.data.name)
+        print("ERROR: %s has no uv map defined\n" % node.data.name)
         nouvmap = True
 
     for j in node.children:

@@ -238,7 +238,7 @@ def write_obj(context, filepath):
         root_node = bpy.data.objects[context.scene.root]
     except:
         print("no root node defined")
-    #So far i have no idea how to do this, so i'm going to leave it for now
+    #FIXME So far i have no idea how to do this, so i'm going to leave it for now
     print("Dont forget to invert the UV Map before exporting or at least"
         "mirror your image in the Y direction")
 

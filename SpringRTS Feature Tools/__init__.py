@@ -36,9 +36,7 @@ if "bpy" in locals():
     if "springrts_feature_export" in locals():
         imp.reload(stringrts_feature_export)
 
-
 import bpy, os, re
-
 from bpy_extras.io_utils import ExportHelper,ImportHelper
 from bpy.props import StringProperty, BoolProperty, EnumProperty
 from bpy.types import Operator
@@ -53,15 +51,9 @@ class SpringRTSFeatureCalculateRadius(Operator):
         springrts_feature_bits.calculate_radius(self, context)
         return {'FINISHED'}
 
-#class SpringRTSFeatureCalculateHeight(Operator):
-#    """Calculate height of feature"""
-#    bl_idname = "springrts_feature.calculate_height"
-#    bl_label = "Calculate SpringRTS Feature Height"
-#
-#    def execute(self, context):
-#        from . import springrts_feature_bits
-#        springrts_feature_bits.calculate_height(self, context)
-#        return {'FINISHED'}
+#############
+# Operators #
+#############
 
 class SpringRTSFeatureCalculateMidpos(Operator):
     """Calculate midpos of feature"""
@@ -103,82 +95,82 @@ class ExportSpringRTSFeature(Operator, ExportHelper):
         print("== Export SpringRTS feature ==")
         return springrts_feature_export.export(context, self.filepath)
 
-class SpringRTSFeatureAttributes(bpy.types.Panel):
+
+#########################
+# User Interface Panels #
+#########################
+
+class SpringRTSFeature(bpy.types.Panel):
     """Creates a Panel in the scene context of the properties editor"""
-    bl_label = "SpringRTS Feature Attributes"
-    bl_idname = "SCENE_PT_SME_featureAttributes"
+    bl_label = "SpringRTS Feature"
+    bl_idname = "SCENE_PT_SFE_Attributes"
     bl_space_type = 'PROPERTIES'
     bl_region_type = 'WINDOW'
     bl_context = "scene"
+
+    def draw_header(self, context):
+        layout = self.layout
+        sfp = context.scene.sfp
+        # Switch on or off feature panels
 
     def draw(self, context):
         layout = self.layout
         sfp = context.scene.sfp
 
-        layout.label(text=" Attributes:")
+        layout.prop(sfp, 'description')
         row = layout.row()
-        row.prop(sfp, 'description')        
-        row = layout.row()
-        row.prop(sfp, 'mass')
-        row = layout.row()
-        row.prop(sfp, 'damage')
-        row = layout.row()
-        row.prop(sfp, 'crushResistance')
-        row = layout.row()
-        row.prop(sfp, 'metal')
-        row.prop(sfp, 'energy')
-        row = layout.row()
-        row.prop(sfp, 'reclaimTime')
+        col1 = row.split()
+        column = col1.column()
+        column.prop(sfp, 'damage')
+        column.prop(sfp, 'metal')
+        column.prop(sfp, 'energy')
+        column = row.column()
+        column.prop(sfp, 'mass')
+        column.prop(sfp, 'crushResistance')
+        column.prop(sfp, 'reclaimTime')
 
-class SpringRTSFeatureCollisionVolume(bpy.types.Panel):
-    """Creates a Panel in the scene context of the properties editor"""
-    bl_label = "SpringRTS Feature Collision Volume"
-    bl_idname = "SCENE_PT_SME_collisionvolume"
-    bl_space_type = 'PROPERTIES'
-    bl_region_type = 'WINDOW'
-    bl_context = "scene"
-
-    def draw(self, context):
-        layout = self.layout
-        sfp = context.scene.sfp
-
-        row = layout.row()
-        row.prop(sfp, 'collisionVolume')
-        row.prop(sfp, 'collisionVolumeType')
-        row = layout.row()
-        row.prop(sfp, 'collisionEditMode')
-        row = layout.row()
-        row.active = sfp.collisionEditMode != 'grab'
-        row.prop(sfp, 'collisionVolumeScales')
-        row = layout.row()
-        row.active = sfp.collisionEditMode != 'grab'
-        row.prop(sfp, 'collisionVolumeOffsets')
-
-class SpringRTSFeatureOptions(bpy.types.Panel):
-    """Creates a Panel in the scene context of the properties editor"""
-    bl_label = "SpringRTS Feature Options"
-    bl_idname = "SCENE_PT_SME_featureOptions"
-    bl_space_type = 'PROPERTIES'
-    bl_region_type = 'WINDOW'
-    bl_context = "scene"
-
-    def draw(self, context):
-        layout = self.layout
-        sfp = context.scene.sfp
-
-        layout.label(text=" Options:")
-        row = layout.row()
-        row.prop(sfp, 'flammable')
+        box = layout.box()
+        row = box.row()
         row.prop(sfp, 'indestructable')
-        row = layout.row()
+        row.prop(sfp, 'flammable')
+        row = box.row()
         row.prop(sfp, 'reclaimable')
         row.prop(sfp, 'autoReclaimable')
-        row = layout.row()
+        row = box.row()
+        row.prop(sfp, 'featureDead')
+        row = box.row()
+        row.prop(sfp, 'smokeTime')
+        row = box.row()
         row.prop(sfp, 'resurrectable')
-        row = layout.row()
+        row = box.row()
+        row.prop(sfp, 'upright')
+        row.prop(sfp, 'floating')
+        row = box.row()
+        row.prop(sfp, 'geothermal')
         row.prop(sfp, 'noSelect')
-        row.prop(sfp, 'blocking')
 
+        box = layout.box()
+        row = box.row()
+        row.label(text="footprint:")
+        row.prop(sfp, 'footprint')
+        row = box.row(align=True)
+        row.prop(sfp, 'blocking')
+        row.prop(sfp, 'footprintX')
+        row.prop(sfp, 'footprintZ')
+
+        box = layout.box()
+        row = box.row()
+        row.label(text="Collision Volume:")
+        row.prop(sfp, 'collisionVolume')
+        row = box.row()
+        row.prop(sfp, 'collisionVolumeType')
+        row.prop(sfp, 'collisionEditMode')
+        row = box.row()
+        row.active = sfp.collisionEditMode != 'grab'
+        row.prop(sfp, 'collisionVolumeScales')
+        row = box.row()
+        row.active = sfp.collisionEditMode != 'grab'
+        row.prop(sfp, 'collisionVolumeOffsets')
 
 class SpringRTSFeatureMesh(bpy.types.Panel):
     """Creates a Panel in the scene context of the properties editor"""
@@ -197,56 +189,26 @@ class SpringRTSFeatureMesh(bpy.types.Panel):
         row.prop_search(sfp, 'rootObject', context.scene, 'objects')
         row = layout.row()
         row.prop_search(sfp, 'tex1', bpy.data, 'images')
-        row = layout.row()
         row.prop_search(sfp, 'tex2', bpy.data, 'images')
-        row = layout.row()
-        row.prop(sfp, 'occlusionVolume', "Show Occlusion Volume")
-        row = layout.row()
+
+        box = layout.box()
+        row = box.row()
+        row.label("Occlusion Volume")
+        row.prop(sfp, 'occlusionVolume', "Show")
+        row = box.row()
         row.prop(sfp, 'occlusionEditMode')
-        row = layout.row()
+        row = box.row()
         row.active = sfp.occlusionEditMode != 'grab'
         row.prop(sfp, 'radius')
         row.operator('springrts_feature.calculate_radius', "Recalc")
-        row = layout.row()
+        row = box.row()
         row.active = sfp.occlusionEditMode != 'grab'
         row.prop(sfp, 'midpos', "")
         row.operator('springrts_feature.calculate_midpos', "Recalc")
 
-
-class SpringRTSFeatureEngine(bpy.types.Panel):
-    """Creates a Panel in the scene context of the properties editor"""
-    bl_label = "SpringRTS Feature Engine"
-    bl_idname = "SCENE_PT_SME_featureengine"
-    bl_space_type = 'PROPERTIES'
-    bl_region_type = 'WINDOW'
-    bl_context = "scene"
-
-    def draw(self, context):
-        layout = self.layout
-        sfp = context.scene.sfp
-
-        layout.label(text=" Engine Stuff:")
-        row = layout.row()
-        row.prop(sfp, 'featureDead')
-        row = layout.row()
-        row.prop(sfp, 'smokeTime')
-
-        row = layout.row()
-        row.prop(sfp, 'upright')
-        row.prop(sfp, 'floating')
-        row = layout.row()
-        row.prop(sfp, 'geothermal')
-
-        layout.label(text=" Pathfinding:")
-        row = layout.row()
-        row.prop(sfp, 'footprint')
-        row = layout.row(align=True)
-        row.prop(sfp, 'footprintX')
-        row.prop(sfp, 'footprintZ')
-
 class SpringRTSFeatureImages(bpy.types.Panel):
     """Creates a Panel in the scene context of the properties editor"""
-    bl_label = "SpringRTS Feature Images"
+    bl_label = "SpringRTS Feature Images Sources"
     bl_idname = "SCENE_PT_SME_featureimages"
     bl_space_type = 'PROPERTIES'
     bl_region_type = 'WINDOW'
@@ -256,7 +218,6 @@ class SpringRTSFeatureImages(bpy.types.Panel):
         layout = self.layout
         sfp = context.scene.sfp
 
-        layout.label(text=" Source Images:")
         row = layout.row()
         row.prop_search(sfp, 'texRGBA', bpy.data, 'images')
         row = layout.row()
@@ -265,6 +226,11 @@ class SpringRTSFeatureImages(bpy.types.Panel):
         row.prop_search(sfp, 'texAmbient', bpy.data, 'images')
         row = layout.row()
         row.prop_search(sfp, 'texSpecular', bpy.data, 'images')
+
+
+##########################
+# Feature Property Group #
+##########################
 
 class SpringRTSFeaturePropertyGroup(bpy.types.PropertyGroup):
     # Source Images 
@@ -483,6 +449,11 @@ class SpringRTSFeaturePropertyGroup(bpy.types.PropertyGroup):
             "centre in each axis",
         update = springrts_feature_bits.update_collision_volume)
 
+
+###################################################
+# Functions cause i was copying obj way of things #
+###################################################
+
 def menu_func_import(self, context):
     self.layout.operator(ImportSpringRTSFeature.bl_idname, text="SpringRTS Feature")
 
@@ -490,6 +461,10 @@ def menu_func_import(self, context):
 def menu_func_export(self, context):
     self.layout.operator(ExportSpringRTSFeature.bl_idname, text="SpringRTS Feature")
 
+
+################
+# Registration #
+################
 
 def register():
 #    bpy.utils.register_module(__name__)
@@ -512,11 +487,8 @@ def register():
     bpy.utils.register_class(SpringRTSFeatureCalculateMidpos)
 
     # Register Scene Menu Panels
-    bpy.utils.register_class(SpringRTSFeatureAttributes)
-    bpy.utils.register_class(SpringRTSFeatureOptions)
-    bpy.utils.register_class(SpringRTSFeatureEngine)
+    bpy.utils.register_class(SpringRTSFeature)
     bpy.utils.register_class(SpringRTSFeatureMesh)
-    bpy.utils.register_class(SpringRTSFeatureCollisionVolume)
     bpy.utils.register_class(SpringRTSFeatureImages)
 
 
@@ -529,12 +501,10 @@ def unregister():
     bpy.utils.unregister_class(ExportSpringRTSFeature)
     bpy.utils.unregister_class(ImportSpringRTSFeature)
 
-    bpy.utils.unregister_class(SpringRTSFeatureAttributes)
-    bpy.utils.unregister_class(SpringRTSFeatureOptions)
-    bpy.utils.unregister_class(SpringRTSFeatureEngine)
+    bpy.utils.unregister_class(SpringRTSFeature)
     bpy.utils.unregister_class(SpringRTSFeatureMesh)
-    bpy.utils.unregister_class(SpringRTSFeatureCollisionVolume)
     bpy.utils.unregister_class(SpringRTSFeatureImages)
+
 
 if __name__ == "__main__":
     register()

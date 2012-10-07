@@ -20,9 +20,16 @@ seperate parts of any blender integration
 == Features ==
 * Modeling
 * Animations
-* Materials
-* Export
-* Import
+=== Materials ===
+* generate final tex1&2 from sources diffuse+transparency, team, specular, ambient
+=== Export ===
+
+=== Import ===
+* Import information from lua files
+* load tdf info
+* Import obj
+* convert and import s30 using behe's tools
+* auto split and load textures into material
 
 == Units ==
 * Modeling

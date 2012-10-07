@@ -196,6 +196,7 @@ def write_def(context, filepath):
     return {'FINISHED'}
 
 def write_heirarchy(node,f,level, count):
+    if node.type != 'MESH': return count
     #keep track of how manu objects
     count = count+1
 

@@ -19,6 +19,9 @@
 import bpy,os,re
 
 def write_def(context, filepath):
+    # Get spring feature properties
+    sfp = bpy.context.scene.sfp
+
     print("LOG: Writing Feature Definition")
     f = open(filepath + "/features/" + os.path.basename(filepath)
         + ".lua", 'w', encoding='utf-8')
@@ -31,42 +34,42 @@ def write_def(context, filepath):
     f.write("\n--// General\n")
 
     try:
-        f.write("\tdescription = \"%s\",\n" % context.scene.description)
+        f.write("\tdescription = \"%s\",\n" % sfp.description)
     except AttributeError:
         print("WARN: description not specified, skipping.")
 
     try:
-        f.write("\tdamage = %.3f,\n" % context.scene.damage)
+        f.write("\tdamage = %.3f,\n" % sfp.damage)
     except AttributeError:
         print("WARN: damage not specified, skipping.")
 
     try:
-        f.write("\tfeatureDead = \"%s\",\n" % context.scene.featureDead)
+        f.write("\tfeatureDead = \"%s\",\n" % sfp.featureDead)
     except AttributeError:
         print("WARN: featureDead not specified, skipping.")
 
     try:
-        f.write("\tindestructable = %s,\n" % str(context.scene.indestructable).lower())
+        f.write("\tindestructable = %s,\n" % str(sfp.indestructable).lower())
     except AttributeError:
         print("WARN: indestructable not specified, skipping.")
     
     try:
-        f.write("\tflammable = %s,\n" % str(context.scene.flammable).lower())
+        f.write("\tflammable = %s,\n" % str(sfp.flammable).lower())
     except AttributeError:
         print("WARN: flammable not specified, skipping.")
 
     try:
-        f.write("\tnoSelect = %s,\n" % str(context.scene.noSelect).lower())
+        f.write("\tnoSelect = %s,\n" % str(sfp.noSelect).lower())
     except AttributeError:
         print("WARN: noSelect not specified, skipping.")
 
     try:
-        f.write("\tmass = %.3f,\n" % context.scene.mass)
+        f.write("\tmass = %.3f,\n" % sfp.mass)
     except AttributeError:
         print("WARN: mass not specified, skipping.")
 
     try:
-        f.write("\tcrushResistance = %.3f,\n" % context.scene.crushResistance)
+        f.write("\tcrushResistance = %.3f,\n" % sfp.crushResistance)
     except AttributeError:
         print("WARN: crushResistance not specified, skipping.")
 
@@ -77,7 +80,7 @@ def write_def(context, filepath):
     f.write("\tobject = \"%s.obj\",\n" % os.path.basename(filepath))
 
     try:
-        f.write("\tsmokeTime = %i,\n" % context.scene.smokeTime)
+        f.write("\tsmokeTime = %i,\n" % sfp.smokeTime)
     except AttributeError:
         print("WARN: smokeTime not specified, skipping.")
 
@@ -85,35 +88,35 @@ def write_def(context, filepath):
     f.write("\n--// Reclaim & Resource\n")
 
     try:
-        f.write("\treclaimable = %s,\n" % str(context.scene.reclaimable).lower())
+        f.write("\treclaimable = %s,\n" % str(sfp.reclaimable).lower())
     except AttributeError:
         print("WARN: reclaimable not specified, skipping.")
 
     try:
-        f.write("\tautoReclaimable = %s,\n" % str(context.scene.noSelect).lower())
+        f.write("\tautoReclaimable = %s,\n" % str(sfp.noSelect).lower())
     except AttributeError:
         print("WARN: autoReclaim not specified, skipping.")
 
     try:
-        f.write("\treclaimTime = %.3f,\n" % context.scene.reclaimTime)
+        f.write("\treclaimTime = %.3f,\n" % sfp.reclaimTime)
     except AttributeError:
         print("WARN: reclaimTime not specified, skipping.")
 
     try:
-        f.write("\tmetal = %.3f,\n" % context.scene.metal)
+        f.write("\tmetal = %.3f,\n" % sfp.metal)
     except AttributeError:
         print("WARN: metal not specified, skipping.")
 
     try:
-        f.write("\tenergy = %.3f,\n" % context.scene.energy)
+        f.write("\tenergy = %.3f,\n" % sfp.energy)
     except AttributeError:
         print("WARN: energy not specified, skipping.")
 
     try:
         f.write("\tresurrectable = ")
-        if context.scene.resurrectable == 'first':
+        if sfp.resurrectable == 'first':
             f.write("-1")
-        elif context.scene.resurrectable == 'no':
+        elif sfp.resurrectable == 'no':
             f.write("0")
         else:
             f.write("1")
@@ -122,7 +125,7 @@ def write_def(context, filepath):
         print("WARN: resurrectable not specified, skipping.")
 
     try:
-        f.write("\tgeoThermal = %s,\n" % str(context.scene.geoThermal).lower())
+        f.write("\tgeoThermal = %s,\n" % str(sfp.geoThermal).lower())
     except AttributeError:
         print("WARN: geoThermal not specified, skipping.")
 
@@ -130,27 +133,27 @@ def write_def(context, filepath):
     f.write("\n--// Placement\n",)
 
     try:
-        f.write("\tfootprintX = %i,\n" % context.scene.footprintX)
+        f.write("\tfootprintX = %i,\n" % sfp.footprintX)
     except AttributeError:
         print("WARN: footprintX not specified, skipping.")
 
     try:
-        f.write("\tfootprintZ = %i,\n" % context.scene.footprintZ)
+        f.write("\tfootprintZ = %i,\n" % sfp.footprintZ)
     except AttributeError:
         print("WARN: footprintY not specified, skipping.")
 
     try:
-        f.write("\tblocking = %s,\n" % str(context.scene.blocking).lower())
+        f.write("\tblocking = %s,\n" % str(sfp.blocking).lower())
     except AttributeError:
         print("WARN: blocking not specified, skipping.")
         
     try:
-        f.write("\tupright = %s,\n" % str(context.scene.upright).lower())
+        f.write("\tupright = %s,\n" % str(sfp.upright).lower())
     except AttributeError:
         print("WARN: upright not specified, skipping.")
 
     try:
-        f.write("\tfloating = %s,\n" % str(context.scene.floating).lower())
+        f.write("\tfloating = %s,\n" % str(sfp.floating).lower())
     except AttributeError:
         print("WARN: floating not specified, skipping.")
 
@@ -158,15 +161,15 @@ def write_def(context, filepath):
     f.write("\n--// Collision Volumes\n",)
 
     try:
-        if context.scene.collisionVolumeType == "SME_box":
+        if sfp.collisionVolumeType == "SME_box":
             ctype = "box"
-        elif context.scene.collisionVolumeType == "SME_ellipsoid":
+        elif sfp.collisionVolumeType == "SME_ellipsoid":
             ctype = "ellipse"
-        elif context.scene.collisionVolumeType == "SME_cylX":
+        elif sfp.collisionVolumeType == "SME_cylX":
             ctype = "cylX"
-        elif context.scene.collisionVolumeType == "SME_cylY":
+        elif sfp.collisionVolumeType == "SME_cylY":
             ctype = "cylY"
-        elif context.scene.collisionVolumeType == "SME_cylZ":
+        elif sfp.collisionVolumeType == "SME_cylZ":
             ctype = "cylZ"
     except AttributeError:
         print("WARN: collisionVolumeType not specified, skipping.")
@@ -175,17 +178,17 @@ def write_def(context, filepath):
 
     try:
         f.write("\tcollisionVolumescales = {%.3f, %.3f, %.3f},\n" % (
-            context.scene.collisionVolumeScales[0],
-            context.scene.collisionVolumeScales[1],
-            context.scene.collisionVolumeScales[2]))
+            sfp.collisionVolumeScales[0],
+            sfp.collisionVolumeScales[1],
+            sfp.collisionVolumeScales[2]))
     except AttributeError:
         print("WARN: collisionVolumeScales not specified, skipping.")
 
     try:
         f.write("\tcollisionVolumeOffsets = {%.3f, %.3f, %.3f},\n" % (
-            context.scene.collisionVolumeOffsets[0],
-            context.scene.collisionVolumeOffsets[1],
-            context.scene.collisionVolumeOffsets[2],))
+            sfp.collisionVolumeOffsets[0],
+            sfp.collisionVolumeOffsets[1],
+            sfp.collisionVolumeOffsets[2],))
     except AttributeError:
         print("WARN: collisionVolumeOffsets not specified, skipping.")
 
@@ -196,6 +199,10 @@ def write_def(context, filepath):
     return {'FINISHED'}
 
 def write_heirarchy(node,f,level, count):
+    # Get spring feature properties
+    sfp = bpy.context.scene.sfp
+
+    # if not mesh skip
     if node.type != 'MESH': return count
     #keep track of how manu objects
     count = count+1
@@ -229,6 +236,9 @@ def write_heirarchy(node,f,level, count):
     
 
 def write_obj(context, filepath):
+    # Get spring feature properties
+    sfp = bpy.context.scene.sfp
+
     # Preparing Scene for export
     # Rename objects to remove unrecognised characters
     for k in bpy.data.objects:
@@ -236,7 +246,7 @@ def write_obj(context, filepath):
         k.data.name = re.sub('\.','_',k.data.name)
 
     # Get the root node
-    root_node = bpy.data.objects[context.scene.root]
+    root_node = bpy.data.objects[sfp.rootObject]
 
     #FIXME So far i have no idea how to do this, so i'm going to leave it for now
     print("NOTE: Dont forget to invert the UV Map before exporting or at least\n"
@@ -275,13 +285,13 @@ def write_obj(context, filepath):
 
     #radius
     try:
-        f.write("\tradius = %.3f,\n" %context.scene.radius)
+        f.write("\tradius = %.3f,\n" %sfp.radius)
     except AttributeError:
         print("WARN: Damage not specified, skipping.")
 
     #height
 #    try:
-#        f.write("\theight = " + str(context.scene.height) + ",\n")
+#        f.write("\theight = " + str(sfp.height) + ",\n")
 #    except AttributeError:
         #FIXME really rough, it doesnt take into account the object heirarchy
         #auto calculate
@@ -290,15 +300,15 @@ def write_obj(context, filepath):
     #midpos
     try:
         f.write("\tmidpos = {%.3f, %.3f, %.3f},\n" % (
-            context.scene.midpos[0] * (-1),
-            context.scene.midpos[1],
-            context.scene.midpos[2]))
+            sfp.midpos[0] * (-1),
+            sfp.midpos[1],
+            sfp.midpos[2]))
     except AttributeError:
         print("WARN: Damage not specified, skipping.")
 
     # textures
-    f.write("\ttex1 = \"%s\",\n" % context.scene.tex1)
-    f.write("\t--tex2 = \"%s\",\n" % context.scene.tex2)
+    f.write("\ttex1 = \"%s\",\n" % sfp.tex1)
+    f.write("\t--tex2 = \"%s\",\n" % sfp.tex2)
 
     # numpieces
     f.write("\tnumpieces = %i,\n" %numpieces)
@@ -311,6 +321,8 @@ def write_obj(context, filepath):
     return {'FINISHED'}
 
 def write_images(context, filepath):
+    # Get spring feature properties
+    sfp = bpy.context.scene.sfp
     #FIXME
     #will need to figure out what to be bothered with here as there are two
     #textures that may need exporting to acceptable formats, or whether a 
@@ -320,13 +332,18 @@ def write_images(context, filepath):
     return {'FINISHED'}
 
 def export(context, filepath):
+    # Get spring feature properties
+    sfp = bpy.context.scene.sfp
+
     # check if root node exists
-    if not context.scene.root in context.scene.objects:
+    if not sfp.rootObject in context.scene.objects:
         raise RuntimeError("ERROR: You need to make sure to set the root node")
         return {'FINISHED'}
+    else:
+        rootObject = context.scene.objects[sfp.rootObject]
 
     # Check if UV Maps are defined for all objects
-    if check_uvmaps(context.scene.objects[context.scene.root]):
+    if check_uvmaps(rootObject):
         raise RuntimeError("ERROR: not all objects have UV Maps defined")
         return {'FINISHED'}
 

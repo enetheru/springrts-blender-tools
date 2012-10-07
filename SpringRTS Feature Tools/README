@@ -1,15 +1,6 @@
 = SpringRTS Feature Tools=
-= VERSION 0.2 =
 = AUTHOR =
 Enetheru, Samuel Nicholas, nicholas.samuel@gmail.com
-= Issues/ToDo =
-== Check before clobber ==
-Try not to overwrite files without checking first
-== Manual texture image work==
-* remove the need to edit the text files after export.
-* write image conversion using imagemagick into the python so that work can be done purely in blender.
-== Copy occlusion volume to Collision Volume button ==
-doesnt seem to be right
 
 = Notes =
 == UV Invert ==

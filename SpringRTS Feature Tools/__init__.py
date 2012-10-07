@@ -29,7 +29,7 @@ bl_info = {
 
 if "bpy" in locals():
     import imp
-    if "springrts_feature_ui" in locals():
+    if "springrts_feature_bits" in locals():
         imp.reload(stringrts_feature_ui)
     if "springrts_feature_import" in locals():
         imp.reload(stringrts_feature_import)
@@ -49,8 +49,8 @@ class SpringRTSFeatureCalculateRadius(Operator):
     bl_label = "Calculate SpringRTS Feature Radius"
 
     def execute(self, context):
-        from . import springrts_feature_ui
-        springrts_feature_ui.calculate_radius(self, context)
+        from . import springrts_feature_bits
+        springrts_feature_bits.calculate_radius(self, context)
         return {'FINISHED'}
 
 #class SpringRTSFeatureCalculateHeight(Operator):
@@ -59,8 +59,8 @@ class SpringRTSFeatureCalculateRadius(Operator):
 #    bl_label = "Calculate SpringRTS Feature Height"
 #
 #    def execute(self, context):
-#        from . import springrts_feature_ui
-#        springrts_feature_ui.calculate_height(self, context)
+#        from . import springrts_feature_bits
+#        springrts_feature_bits.calculate_height(self, context)
 #        return {'FINISHED'}
 
 class SpringRTSFeatureCalculateMidpos(Operator):
@@ -69,8 +69,8 @@ class SpringRTSFeatureCalculateMidpos(Operator):
     bl_label = "Calculate SpringRTS Feature Midpos"
 
     def execute(self, context):
-        from . import springrts_feature_ui
-        springrts_feature_ui.calculate_midpos(self, context)
+        from . import springrts_feature_bits
+        springrts_feature_bits.calculate_midpos(self, context)
         return {'FINISHED'}
 
 class ImportSpringRTSFeature(Operator, ImportHelper):
@@ -254,7 +254,7 @@ def menu_func_export(self, context):
 
 
 def register():
-    from . import springrts_feature_ui
+    from . import springrts_feature_bits
 #    bpy.utils.register_module(__name__)
 
     bpy.utils.register_class(ExportSpringRTSFeature)
@@ -281,20 +281,20 @@ def register():
         name = "Show",
         description = "Turn on visual for occlusion Volume.",
         default = False,
-        update = springrts_feature_ui.update_occlusion_volume)
+        update = springrts_feature_bits.update_occlusion_volume)
 
     bpy.types.Scene.occlusionEditMode = bpy.props.EnumProperty(
         name = "Edit Mode",
         items = (('manual',"Manual","Enter Values Manually"),
             ('grab',"Grab","Transform the occlusion volume in 3d view"),),
         description = "Occlusion Volume Edit Mode",
-        update = springrts_feature_ui.update_occlusion_volume)
+        update = springrts_feature_bits.update_occlusion_volume)
 
 
 # 3D object Properties
     bpy.types.Scene.root = bpy.props.StringProperty(
         name="Root Node",
-        update = springrts_feature_ui.root_node_check)
+        update = springrts_feature_bits.root_node_check)
 
     bpy.types.Scene.radius = bpy.props.FloatProperty(
         name="Radius",
@@ -302,12 +302,12 @@ def register():
         min = 0.01,
         default = 1,
         precision = 3,
-        update = springrts_feature_ui.update_occlusion_volume)
+        update = springrts_feature_bits.update_occlusion_volume)
 
     bpy.types.Scene.midpos = bpy.props.FloatVectorProperty(
         name="Mid Point",
         description = "",
-        update = springrts_feature_ui.update_occlusion_volume)
+        update = springrts_feature_bits.update_occlusion_volume)
 
 #    bpy.types.Scene.height = bpy.props.FloatProperty(
 #        name="Height",
@@ -315,7 +315,7 @@ def register():
 #        min = 0.01,
 #        default = 1,
 #        precision = 3,
-#        update = springrts_feature_ui.update_occlusion_volume)
+#        update = springrts_feature_bits.update_occlusion_volume)
 
 # General
     bpy.types.Scene.description = bpy.props.StringProperty(name="Description")
@@ -411,21 +411,21 @@ def register():
         name = "Show Footprint",
         description = "Turn on visual for footprint.",
         default = False,
-        update = springrts_feature_ui.update_footprint)
+        update = springrts_feature_bits.update_footprint)
 
     bpy.types.Scene.footprintX = bpy.props.IntProperty(
         name = "Footprint X",
         description = "How wide the feature is, for pathfinding and blocking.",
         default = 1,
         min = 1,
-        update = springrts_feature_ui.update_footprint)
+        update = springrts_feature_bits.update_footprint)
 
     bpy.types.Scene.footprintZ = bpy.props.IntProperty(
         name = "Footprint Z",
         description = "How wide the feature is, for pathfinding and blocking.",
         default = 1,
         min = 1,
-        update = springrts_feature_ui.update_footprint)
+        update = springrts_feature_bits.update_footprint)
 
     bpy.types.Scene.blocking = bpy.props.BoolProperty(
         name = "Blocking",
@@ -446,14 +446,14 @@ def register():
         name = "Show",
         description = "Turn on visual for Collision Volume.",
         default = False,
-        update = springrts_feature_ui.update_collision_volume)
+        update = springrts_feature_bits.update_collision_volume)
 
     bpy.types.Scene.collisionEditMode = bpy.props.EnumProperty(
         name = "Edit Mode",
         items = (('manual',"Manual","Enter Values Manually"),
             ('grab',"Grab","Transform the volume in 3d view"),),
         description = "Collision Volume Edit Mode",
-        update = springrts_feature_ui.update_collision_volume)
+        update = springrts_feature_bits.update_collision_volume)
 
     bpy.types.Scene.collisionVolumeType = bpy.props.EnumProperty(
         name = "Type",
@@ -463,21 +463,21 @@ def register():
             ('SME_cylY',"Cylinder Y","Y Axis Aligned Cylinder"),
             ('SME_cylZ',"Cylinder Z","Z Axis Aligned Cylinder")),
         description = "The Shape of the collision volume",
-        update = springrts_feature_ui.update_collision_volume)
+        update = springrts_feature_bits.update_collision_volume)
 
     bpy.types.Scene.collisionVolumeScales = bpy.props.FloatVectorProperty(
         name = "Scale",
         description = "The lengths of the collision volume in each axis",
         default = (1.0,1.0,1.0),
         min = 0.01,
-        update = springrts_feature_ui.update_collision_volume)
+        update = springrts_feature_bits.update_collision_volume)
 
 
     bpy.types.Scene.collisionVolumeOffsets = bpy.props.FloatVectorProperty(
         name = "Offset",
         description = "The offset from the unit centre to the hit volume"
             "centre in each axis",
-        update = springrts_feature_ui.update_collision_volume)
+        update = springrts_feature_bits.update_collision_volume)
 
 # Object Menu Panels
     bpy.utils.register_class(SpringRTSFeatureAttributes)

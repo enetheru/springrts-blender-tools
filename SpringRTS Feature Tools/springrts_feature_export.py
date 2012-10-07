@@ -350,6 +350,7 @@ def check_uvmaps(node):
         nouvmap = True
 
     for j in node.children:
+        if j.type != 'MESH': continue
         childuvmap = check_uvmaps(j)
         nouvmap = nouvmap or childuvmap
 

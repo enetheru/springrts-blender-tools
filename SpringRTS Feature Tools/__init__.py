@@ -293,7 +293,8 @@ def register():
 
 # 3D object Properties
     bpy.types.Scene.root = bpy.props.StringProperty(
-        name="Root Node")
+        name="Root Node",
+        update = springrts_feature_ui.root_node_check)
 
     bpy.types.Scene.radius = bpy.props.FloatProperty(
         name="Radius",

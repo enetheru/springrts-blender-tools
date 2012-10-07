@@ -19,7 +19,7 @@
 import bpy,mathutils
 
 def recurse_radius(node, distance=0.0):
-    
+    if node.type != 'MESH': return distance    
 #   if vertex distance is larger than distance
     midpos = mathutils.Vector((
         bpy.context.scene.midpos[0],
@@ -56,7 +56,7 @@ def recurse_midpos(
     node,
     bounds=[mathutils.Vector((0.0,0.0,0.0)), mathutils.Vector((0.0,0.0,0.0))],
     first=True):
-
+    if node.type != 'MESH': return bounds
     offset = mathutils.Vector(
         (node.matrix_world[0][3],
         node.matrix_world[1][3],
@@ -80,7 +80,9 @@ def recurse_midpos(
     return bounds
 
 def calculate_radius(self, context):
-    print("Calculate radius")
+    if not context.scene.root in context.scene.objects:
+        raise RuntimeError("ERROR: You need to make sure to set the root node")
+        return {'FINISHED'}
     root = context.scene.objects[context.scene.root]
     mp = context.scene.midpos
     origin = mathutils.Vector((mp[0],mp[1],mp[2]))
@@ -96,6 +98,9 @@ def calculate_radius(self, context):
 #    return {'FINISHED'}
 
 def calculate_midpos(self, context):
+    if not context.scene.root in context.scene.objects:
+        raise RuntimeError("ERROR: You need to make sure to set the root node")
+        return {'FINISHED'}
     root = context.scene.objects[context.scene.root]
     bounds = recurse_midpos(root)
     centre = (bounds[0] + bounds[1]) * 0.5
@@ -167,6 +172,11 @@ def update_collision_volume(self, context):
         object.location.y = (context.scene.collisionVolumeOffsets[2] + context.scene.midpos[2]) * -1
         object.location.z = context.scene.collisionVolumeOffsets[1] + context.scene.midpos[1]
 
+    return None
+
+def root_node_check(self, context):
+    if context.scene.objects[context.scene.root].type != 'MESH':
+        context.scene.root = ''
     return None
 
 def update_occlusion_volume(self, context):

@@ -134,7 +134,6 @@ def update_footprint(self, context):
     object.scale.y = sfp.footprintZ * 8
     object.location.x = object.scale.x * -1.0
     object.location.y = object.scale.y
-    return {'FINISHED'}
 
 def update_collision_volume(self, context):
     # Get spring feature properties

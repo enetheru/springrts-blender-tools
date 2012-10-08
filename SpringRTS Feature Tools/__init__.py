@@ -78,7 +78,7 @@ class ImportSpringRTSFeature(Operator, ImportHelper):
 
     def execute(self, context):
         print("== Import SpringRTS feature ==")
-        return {'FINISHED'}
+        return springrts_feature_import.load(context, self.filepath)
 
 class ExportSpringRTSFeature(Operator, ExportHelper):
     """Save a SpringRTS Feature"""
@@ -233,7 +233,205 @@ class SpringRTSFeatureImages(bpy.types.Panel):
 ##########################
 
 class SpringRTSFeaturePropertyGroup(bpy.types.PropertyGroup):
-    # Source Images 
+    description = bpy.props.StringProperty(name="Description")
+
+#General
+    damage = bpy.props.FloatProperty(
+        name="Damage",
+        description = "How much damage this feature can take before"
+            "being destroyed.",
+        min = 0.0,
+        default = 0,
+        precision = 3)
+
+# Attributes
+    metal = bpy.props.FloatProperty(
+        name = "Metal",
+        description = "Amount of metal this feature gives when reclaimed.",
+        default = 0.0,
+        min = 0.0)
+
+    energy = bpy.props.FloatProperty(
+        name = "Energy",
+        description = "Amount of energy this feature gives when reclaimed.",
+        default = 0.0,
+        min = 0.0)
+
+    mass = bpy.props.FloatProperty(
+        name = "Mass",
+        description = "The mass of the feature.",
+        default = 1.0,
+        min = 1.0,
+        precision = 3)
+
+    crushResistance = bpy.props.FloatProperty(
+        name = "Crush Resistance",
+        description = "How resistant is the feature to being crushed.",
+        min = 0.0,
+        precision = 3)
+
+    reclaimTime = bpy.props.FloatProperty(
+        name = "Reclaim Time",
+        description = "The time taken to reclaim this feature.")
+
+# Options
+    indestructable = bpy.props.BoolProperty(
+        name="Indestructable",
+        description = "Can the feature take damage?")
+
+    flammable = bpy.props.BoolProperty(
+        name = "Flammable",
+        description = "Can the feature be set on fire?")
+
+    reclaimable = bpy.props.BoolProperty(
+        name = "Reclaimable",
+        description = "Can be reclaimed by a construction unit?",
+        default = True)
+
+    autoReclaimable = bpy.props.BoolProperty(
+        name = "Auto Reclaim",
+        description = "Can be be reclaimed by a construction"
+            "unit executing a patrol or area-reclaim command?",
+        default = True)
+
+    featureDead = bpy.props.StringProperty(
+        name = "Death Feature",
+        description = "The featureName of the feature to spawn when this"
+            "feature is destroyed.")
+
+    smokeTime = bpy.props.IntProperty(
+        name = "Smoke Time",
+        description = "How many frames a corpse feature should emit smoke"
+            "for after unit death.",
+        default = 300,
+        min = 0)
+
+    resurrectable = bpy.props.EnumProperty(
+        name = "Resurrectable",
+        items = (('first',"First Corpse","Only if feature is in first level decay"),
+            ('no',"No", "feature is not able to be resurrected"),
+            ('yes', "Yes", "Unit is always able to be resurrected")),
+        description = "Can this feature be resurrected?")
+
+    upright = bpy.props.BoolProperty(
+        name = "Upright",
+        description = "Tilt with the slope of the terrain or stay upright?")
+
+    floating = bpy.props.BoolProperty(
+        name = "Float",
+        description = "Float on top of water or sit on the seabed?")
+
+    geothermal = bpy.props.BoolProperty(
+        name = "Geothermal Vent",
+        description = "Does this feature act as a geothermal vent?")
+
+    noSelect = bpy.props.BoolProperty(
+        name = "No Select",
+        description = "If true the cursor won't change to `reclaim` when"
+            "hovering the feature.")
+
+# Footprint
+    footprint = bpy.props.BoolProperty(
+        name = "Show Footprint",
+        description = "Turn on visual for footprint.",
+        default = False,
+        update = springrts_feature_bits.update_footprint)
+
+    blocking = bpy.props.BoolProperty(
+        name = "Blocking",
+        description = "Does this feature block unit movement and is ignored"
+            "by weapon aiming",
+        default = True)
+
+    footprintX = bpy.props.IntProperty(
+        name = "Footprint X",
+        description = "How wide the feature is, for pathfinding and blocking.",
+        default = 1,
+        min = 1,
+        update = springrts_feature_bits.update_footprint)
+
+    footprintZ = bpy.props.IntProperty(
+        name = "Footprint Z",
+        description = "How wide the feature is, for pathfinding and blocking.",
+        default = 1,
+        min = 1,
+        update = springrts_feature_bits.update_footprint)
+
+# Collision Volume
+    collisionVolume = bpy.props.BoolProperty(
+        name = "Show",
+        description = "Turn on visual for Collision Volume.",
+        default = False,
+        update = springrts_feature_bits.update_collision_volume)
+
+    collisionVolumeType = bpy.props.EnumProperty(
+        name = "Type",
+        items = (('SME_box',"Box","Simple Box"),
+            ('SME_ellipsoid',"Ellipsoid","Spherical like object"),
+            ('SME_cylX',"Cylinder X","X Axis Aligned Cylinder"),
+            ('SME_cylY',"Cylinder Y","Y Axis Aligned Cylinder"),
+            ('SME_cylZ',"Cylinder Z","Z Axis Aligned Cylinder")),
+        description = "The Shape of the collision volume",
+        update = springrts_feature_bits.update_collision_volume)
+
+    collisionEditMode = bpy.props.EnumProperty(
+        name = "Edit Mode",
+        items = (('manual',"Manual","Enter Values Manually"),
+            ('grab',"Grab","Transform the volume in 3d view"),),
+        description = "Collision Volume Edit Mode",
+        update = springrts_feature_bits.update_collision_volume)
+
+    collisionVolumeScales = bpy.props.FloatVectorProperty(
+        name = "Scale",
+        description = "The lengths of the collision volume in each axis",
+        default = (1.0,1.0,1.0),
+        min = 0.01,
+        update = springrts_feature_bits.update_collision_volume)
+
+    collisionVolumeOffsets = bpy.props.FloatVectorProperty(
+        name = "Offset",
+        description = "The offset from the unit centre to the hit volume"
+            "centre in each axis",
+        update = springrts_feature_bits.update_collision_volume)
+
+# Mesh
+    rootObject = bpy.props.StringProperty(
+        name="Root Object",
+        update = springrts_feature_bits.root_object_check)
+
+    tex1 = bpy.props.StringProperty(name = "tex1",
+        description = "RGB diffuse and team overlay")
+
+    tex2 = bpy.props.StringProperty(name = "tex2",
+        description = "ambient, specular, unused and alpha")
+
+    occlusionVolume = bpy.props.BoolProperty(
+        name = "Show",
+        description = "Turn on visual for occlusion Volume.",
+        default = False,
+        update = springrts_feature_bits.update_occlusion_volume)
+
+    occlusionEditMode = bpy.props.EnumProperty(
+        name = "Edit Mode",
+        items = (('manual',"Manual","Enter Values Manually"),
+            ('grab',"Grab","Transform the occlusion volume in 3d view"),),
+        description = "Occlusion Volume Edit Mode",
+        update = springrts_feature_bits.update_occlusion_volume)
+
+    radius = bpy.props.FloatProperty(
+        name="Radius",
+        description = "",
+        min = 0.01,
+        default = 1,
+        precision = 3,
+        update = springrts_feature_bits.update_occlusion_volume)
+
+    midpos = bpy.props.FloatVectorProperty(
+        name="Mid Point",
+        description = "",
+        update = springrts_feature_bits.update_occlusion_volume)
+
+# Source Images
     texRGBA = bpy.props.StringProperty(
         name = "Diffuse+Alpha",
         description = "RGBA diffuse + Alpha")
@@ -250,204 +448,6 @@ class SpringRTSFeaturePropertyGroup(bpy.types.PropertyGroup):
         name = "Specular",
         description = "Specular Addition")
 
-    # Occlusion Volume
-    occlusionVolume = bpy.props.BoolProperty(
-        name = "Show",
-        description = "Turn on visual for occlusion Volume.",
-        default = False,
-        update = springrts_feature_bits.update_occlusion_volume)
-
-    occlusionEditMode = bpy.props.EnumProperty(
-        name = "Edit Mode",
-        items = (('manual',"Manual","Enter Values Manually"),
-            ('grab',"Grab","Transform the occlusion volume in 3d view"),),
-        description = "Occlusion Volume Edit Mode",
-        update = springrts_feature_bits.update_occlusion_volume)
-
-    # 3D object Properties
-    rootObject = bpy.props.StringProperty(
-        name="Root Object",
-        update = springrts_feature_bits.root_object_check)
-
-    tex1 = bpy.props.StringProperty(name = "tex1",
-        description = "RGB diffuse and team overlay")
-
-    tex2 = bpy.props.StringProperty(name = "tex2",
-        description = "ambient, specular, unused and alpha")
-
-    radius = bpy.props.FloatProperty(
-        name="Radius",
-        description = "",
-        min = 0.01,
-        default = 1,
-        precision = 3,
-        update = springrts_feature_bits.update_occlusion_volume)
-
-    midpos = bpy.props.FloatVectorProperty(
-        name="Mid Point",
-        description = "",
-        update = springrts_feature_bits.update_occlusion_volume)
-
-    # General
-    description = bpy.props.StringProperty(name="Description")
-
-    damage = bpy.props.FloatProperty(
-        name="Damage",
-        description = "How much damage this feature can take before"
-            "being destroyed.",
-        min = 0.0,
-        default = 0,
-        precision = 3)
-
-    featureDead = bpy.props.StringProperty(
-        name = "Death Feature",
-        description = "The featureName of the feature to spawn when this"
-            "feature is destroyed.")
-
-    indestructable = bpy.props.BoolProperty(
-        name="Indestructable",
-        description = "Can the feature take damage?")
-
-    flammable = bpy.props.BoolProperty(
-        name = "Flammable",
-        description = "Can the feature be set on fire?")
-
-    noSelect = bpy.props.BoolProperty(
-        name = "No Select",
-        description = "If true the cursor won't change to `reclaim` when"
-            "hovering the feature.")
-
-    mass = bpy.props.FloatProperty(
-        name = "Mass",
-        description = "The mass of the feature.",
-        default = 1.0,
-        min = 1.0,
-        precision = 3)
-
-    crushResistance = bpy.props.FloatProperty(
-        name = "Crush Resistance",
-        description = "How resistant is the feature to being crushed.",
-        min = 0.0,
-        precision = 3)
-
-    # Visual
-    smokeTime = bpy.props.IntProperty(
-        name = "Smoke Time",
-        description = "How many frames a corpse feature should emit smoke"
-            "for after unit death.",
-        default = 300,
-        min = 0)
-
-    # Reclaim & Resource
-    reclaimable = bpy.props.BoolProperty(
-        name = "Reclaimable",
-        description = "Can be reclaimed by a construction unit?",
-        default = True)
-
-    autoReclaimable = bpy.props.BoolProperty(
-        name = "Auto Reclaim",
-        description = "Can be be reclaimed by a construction"
-            "unit executing a patrol or area-reclaim command?",
-        default = True)
-
-    reclaimTime = bpy.props.FloatProperty(
-        name = "Reclaim Time",
-        description = "The time taken to reclaim this feature.")
-
-    metal = bpy.props.FloatProperty(
-        name = "Metal",
-        description = "Amount of metal this feature gives when reclaimed.",
-        default = 0.0,
-        min = 0.0)
-
-    energy = bpy.props.FloatProperty(
-        name = "Energy",
-        description = "Amount of energy this feature gives when reclaimed.",
-        default = 0.0,
-        min = 0.0)
-
-    resurrectable = bpy.props.EnumProperty(
-        name = "Resurrectable",
-        items = (('first',"First Corpse","Only if feature is in first level decay"),
-            ('no',"No", "feature is not able to be resurrected"),
-            ('yes', "Yes", "Unit is always able to be resurrected")),
-        description = "Can this feature be resurrected?")
-
-    geothermal = bpy.props.BoolProperty(
-        name = "Geothermal Vent",
-        description = "Does this feature act as a geothermal vent?")
-
-    # Placement
-    footprint = bpy.props.BoolProperty(
-        name = "Show Footprint",
-        description = "Turn on visual for footprint.",
-        default = False,
-        update = springrts_feature_bits.update_footprint)
-
-    footprintX = bpy.props.IntProperty(
-        name = "Footprint X",
-        description = "How wide the feature is, for pathfinding and blocking.",
-        default = 1,
-        min = 1,
-        update = springrts_feature_bits.update_footprint)
-
-    footprintZ = bpy.props.IntProperty(
-        name = "Footprint Z",
-        description = "How wide the feature is, for pathfinding and blocking.",
-        default = 1,
-        min = 1,
-        update = springrts_feature_bits.update_footprint)
-
-    blocking = bpy.props.BoolProperty(
-        name = "Blocking",
-        description = "Does this feature block unit movement and is ignored"
-            "by weapon aiming",
-        default = True)
-
-    upright = bpy.props.BoolProperty(
-        name = "Upright",
-        description = "Tilt with the slope of the terrain or stay upright?")
-
-    floating = bpy.props.BoolProperty(
-        name = "Float",
-        description = "Float on top of water or sit on the seabed?")
-
-    # Collision Volumes
-    collisionVolume = bpy.props.BoolProperty(
-        name = "Show",
-        description = "Turn on visual for Collision Volume.",
-        default = False,
-        update = springrts_feature_bits.update_collision_volume)
-
-    collisionEditMode = bpy.props.EnumProperty(
-        name = "Edit Mode",
-        items = (('manual',"Manual","Enter Values Manually"),
-            ('grab',"Grab","Transform the volume in 3d view"),),
-        description = "Collision Volume Edit Mode",
-        update = springrts_feature_bits.update_collision_volume)
-
-    collisionVolumeType = bpy.props.EnumProperty(
-        name = "Type",
-        items = (('SME_box',"Box","Simple Box"),
-            ('SME_ellipsoid',"Ellipsoid","Spherical like object"),
-            ('SME_cylX',"Cylinder X","X Axis Aligned Cylinder"),
-            ('SME_cylY',"Cylinder Y","Y Axis Aligned Cylinder"),
-            ('SME_cylZ',"Cylinder Z","Z Axis Aligned Cylinder")),
-        description = "The Shape of the collision volume",
-        update = springrts_feature_bits.update_collision_volume)
-
-    collisionVolumeScales = bpy.props.FloatVectorProperty(
-        name = "Scale",
-        description = "The lengths of the collision volume in each axis",
-        default = (1.0,1.0,1.0),
-        min = 0.01,
-        update = springrts_feature_bits.update_collision_volume)
-
-    collisionVolumeOffsets = bpy.props.FloatVectorProperty(
-        name = "Offset",
-        description = "The offset from the unit centre to the hit volume"
-            "centre in each axis",
-        update = springrts_feature_bits.update_collision_volume)
 
 
 ###################################################

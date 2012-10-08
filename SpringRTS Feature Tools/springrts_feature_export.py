@@ -177,7 +177,7 @@ def write_def(context, filepath):
         f.write("\tcollisionVolumeType = \"%s\",\n" % ctype)
 
     try:
-        f.write("\tcollisionVolumescales = {%.3f, %.3f, %.3f},\n" % (
+        f.write("\tcollisionVolumeScales = {%.3f, %.3f, %.3f},\n" % (
             sfp.collisionVolumeScales[0],
             sfp.collisionVolumeScales[1],
             sfp.collisionVolumeScales[2]))

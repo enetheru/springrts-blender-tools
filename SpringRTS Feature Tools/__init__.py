@@ -82,7 +82,7 @@ class ImportSpringRTSFeature(Operator, ImportHelper):
 
 class ExportSpringRTSFeature(Operator, ExportHelper):
     """Save a SpringRTS Feature"""
-    bl_idname = "export_springrts.feature"
+    bl_idname = "export_scene.springrts_feature"
     bl_label = 'Export SpringRTS Feature'
 
     filename_ext = ""

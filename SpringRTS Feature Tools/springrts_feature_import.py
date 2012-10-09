@@ -21,6 +21,10 @@ def load(context, filepath):
     # Get spring feature properties
     sfp = bpy.context.scene.sfp
 
+    #find base path
+    basepath = os.path.dirname(filepath)
+    basepath = os.path.dirname(basepath)
+
     #FIXME
     meshname = ""
 
@@ -29,103 +33,121 @@ def load(context, filepath):
     f = open(filepath)
     luadef = f.read()
     f.close()
-    split = re.split('\n|[\t =",{}]+|--.*\n',luadef)
+
+    # tokenize mesh lua and clean up
+    temp = []
+    tokens = re.split('([{}])|[= \n\t,]+|--.*\n',luadef)
+    for i in tokens:
+        if i == None:
+            continue
+        if i == '':
+            continue
+        temp = temp + [i]
+    tokens = temp
+
+    level = 0
     index = 0
-    while index < len(split)-1:
-        key = split[index]
-        pair = split[index+1]
-        if key == '':
-            index += 1
+    # Loop through tokens
+    while index < len(tokens)-1:
+        key = tokens[index]
+        pair = tokens[index+1]
+        if key.lower() == '{':
+            level +=1
+            index +=1
+            continue
+        if key.lower() == '}':
+            level -=1
+            index +=1
             continue
     # General
         if key.lower() == 'description':
-            print("LOG: '%s' = %s" % (key, pair))
-            sfp.description = pair
+            sfp.description = pair.replace('\"','')
+            print("LOG: '%s' = %s" % (key, sfp.description))
             index +=2
             continue
 
     # Attributes
         if key.lower() == 'damage':
-            print("LOG: '%s' = %s" % (key, pair))
             sfp.damage = float(pair)
+            print("LOG: '%s' = %s" % (key, sfp.damage))
             index +=2
             continue
 
         if key.lower() == 'metal':
-            print("LOG: '%s' = %s" % (key, pair))
             sfp.metal = float(pair)
+            print("LOG: '%s' = %s" % (key, sfp.metal))
             index +=2
             continue
 
         if key.lower() == 'energy':
-            print("LOG: '%s' = %s" % (key, pair))
             sfp.energy = float(pair)
+            print("LOG: '%s' = %s" % (key, sfp.energy))
             index +=2
             continue
 
         if key.lower() == 'mass':
-            print("LOG: '%s' = %s" % (key, pair))
             sfp.mass = float(pair)
+            print("LOG: '%s' = %s" % (key, sfp.mass))
             index +=2
             continue
 
         if key.lower() == 'crushresistance':
-            print("LOG: '%s' = %s" % (key, pair))
             sfp.crushResistance = float(pair)
+            print("LOG: '%s' = %s" % (key, sfp.crushResistance))
             index +=2
             continue
 
         if key.lower() == 'reclaimtime':
-            print("LOG: '%s' = %s" % (key, pair))
             sfp.reclaimTime = float(pair)
+            print("LOG: '%s' = %s" % (key, sfp.reclaimTime))
             index +=2
             continue
     # Options
         if key.lower() == 'indestructable':
-            print("LOG: '%s' = %s" % (key, pair))
             if pair.lower() == 'true':
                 sfp.indestructable = True
             else:
                 sfp.indestructable = False
+            print("LOG: '%s' = %s" % (key, sfp.indestructable))
             index +=2
             continue
 
         if key.lower() == 'flammable':
-            print("LOG: '%s' = %s" % (key, pair))
             if pair.lower() == 'true':
                 sfp.flammable = True
             else:
                 sfp.flammable = False
+            print("LOG: '%s' = %s" % (key, sfp.flammable))
             index +=2
             continue
 
         if key.lower() == 'reclaimable':
-            print("LOG: '%s' = %s" % (key, pair))
             if pair.lower() == 'true':
                 sfp.reclaimable = True
             else:
                 sfp.reclaimable = False
+            print("LOG: '%s' = %s" % (key, sfp.reclaimable))
             index +=2
             continue
 
         if key.lower() == 'autoreclaimable':
-            print("LOG: '%s' = %s" % (key, pair))
             if pair.lower() == 'true':
                 sfp.autoReclaimable = True
             else:
                 sfp.autoReclaimable = False
+            print("LOG: '%s' = %s" % (key, sfp.autoReclaimable))
             index +=2
             continue
 
         if key.lower() == 'featuredead':
-            print("LOG: '%s' = %s" % (key, pair))
-            sfp.featureDead = pair
+            sfp.featureDead = pair.replace('\"','')
+            print("LOG: '%s' = %s" % (key, sfp.featureDead))
             index +=2
             continue
 
         if key.lower() == 'smoketime':
-            print("LOG: '%s' = %s" % (key, pair))
             sfp.smokeTime = int(pair)
+            print("LOG: '%s' = %s" % (key, sfp.smokeTime))
             index +=2
             continue
 
@@ -143,65 +165,64 @@ def load(context, filepath):
             continue
 
         if key.lower() == 'upright':
-            print("LOG: '%s' = %s" % (key, pair))
             if pair.lower() == 'true':
                 sfp.upright = True
             else:
                 sfp.upright = False
+            print("LOG: '%s' = %s" % (key, sfp.upright))
             index +=2
             continue
 
         if key.lower() == 'floating':
-            print("LOG: '%s' = %s" % (key, pair))
             if pair.lower() == 'true':
                 sfp.floating = True
             else:
                 sfp.floating = False
+            print("LOG: '%s' = %s" % (key, sfp.floating))
             index +=2
             continue
 
         if key.lower() == 'geothermal':
-            print("LOG: '%s' = %s" % (key, pair))
             if pair.lower() == 'true':
                 sfp.geothermal = True
             else:
                 sfp.geothermal = False
+            print("LOG: '%s' = %s" % (key, sfp.geothermal))
             index +=2
             continue
 
         if key.lower() == 'noselect':
-            print("LOG: '%s' = %s" % (key, pair))
             if pair.lower() == 'true':
                 sfp.noSelect = True
             else:
                 sfp.noSelect = False
+            print("LOG: '%s' = %s" % (key, sfp.noSelect))
             index +=2
             continue
     # Footprint
         if key.lower() == 'blocking':
-            print("LOG: '%s' = %s" % (key, pair))
             if pair.lower() == 'true':
                 sfp.blocking = True
             else:
                 sfp.blocking = False
+            print("LOG: '%s' = %s" % (key, sfp.blocking))
             index +=2
             continue
 
         if key.lower() == 'footprintx':
-            print("LOG: '%s' = %s" % (key, pair))
             sfp.footprintX = int(pair)
+            print("LOG: '%s' = %s" % (key, sfp.footprintX))
             index +=2
             continue
 
         if key.lower() == 'footprintz':
-            print("LOG: '%s' = %s" % (key, pair))
             sfp.footprintZ = int(pair)
+            print("LOG: '%s' = %s" % (key, sfp.footprintZ))
             index +=2
             continue
 
     #Collision Volume
         if key.lower() == 'collisionvolumetype':
-            print("LOG: '%s' = %s" % (key, pair))
             if pair == 'box':
                 sfp.collisionVolumeType = 'SME_box'
             elif pair == 'ellipse':
@@ -212,29 +233,30 @@ def load(context, filepath):
                 sfp.collisionVolumeType = 'SME_cylY'
             else:
                 sfp.collisionVolumeType = 'SME_cylZ'
+            print("LOG: '%s' = %s" % (key, sfp.collisionVolumeType))
             index+=2
             continue
 
         if key.lower() == 'collisionvolumescales':
-            print("LOG: '%s' = {%s, %s, %s}" % (key, 
-                split[index+1],
-                split[index+2],
-                split[index+3]))
-            sfp.collisionVolumeScales[0] = float(split[index+1])
-            sfp.collisionVolumeScales[1] = float(split[index+2])
-            sfp.collisionVolumeScales[2] = float(split[index+3])
-            index+=4
+            sfp.collisionVolumeScales[0] = float(tokens[index+2])
+            sfp.collisionVolumeScales[1] = float(tokens[index+3])
+            sfp.collisionVolumeScales[2] = float(tokens[index+4])
+            print("LOG: '%s' = {%s, %s, %s}" % (key,
+                sfp.collisionVolumeScales[0],
+                sfp.collisionVolumeScales[1],
+                sfp.collisionVolumeScales[2]))
+            index+=6
             continue
 
         if key.lower() == 'collisionvolumeoffsets':
-            print("LOG: '%s' = {%s, %s, %s}" % (key, 
-                split[index+1],
-                split[index+2],
-                split[index+3]))
-            sfp.collisionVolumeOffsets[0] = float(split[index+1])
-            sfp.collisionVolumeOffsets[1] = float(split[index+2])
-            sfp.collisionVolumeOffsets[2] = float(split[index+3])
-            index+=4
+            sfp.collisionVolumeOffsets[0] = float(tokens[index+2])
+            sfp.collisionVolumeOffsets[1] = float(tokens[index+3])
+            sfp.collisionVolumeOffsets[2] = float(tokens[index+4])
+            print("LOG: '%s' = {%s, %s, %s}" % (key,
+                sfp.collisionVolumeOffsets[0],
+                sfp.collisionVolumeOffsets[1],
+                sfp.collisionVolumeOffsets[2]))
+            index+=6
             continue
     # Other
         if key.lower() == 'collisionvolumetest':
@@ -243,18 +265,16 @@ def load(context, filepath):
             continue
 
         if key.lower() == 'object':
-            print("LOG: obj filename = %s" % pair)
-            meshname = pair
+            meshname = pair.replace('\"','')
+            print("LOG: obj filename = %s" % meshname)
             index +=2
             continue
 
         print("LOG: '%s' - not recognised" %key)
         index +=1
 
-    #FIXME, import mesh
-    temp = os.path.dirname(filepath)
-    temp = os.path.dirname(temp)
-    meshfilepath = temp + "/objects3d/" + meshname
+    #import mesh
+    meshfilepath = basepath + "/objects3d/" + meshname
     print("LOG: importing obj mesh")
     print("LOG: %s" % meshfilepath)
 
@@ -269,16 +289,39 @@ def load(context, filepath):
     f = open(meshluapath)
     meshlua = f.read()
     f.close()
-    split = re.split('\n|[\t =",{}]+|--.*\n',meshlua)
+    # tokenize mesh lua and clean up
+    temp = []
+    tokens = re.split('([{}])|[= \n\t,]+|--.*\n',meshlua)
+    for i in tokens:
+        if i == None:
+            continue
+        if i == '':
+            continue
+        temp = temp + [i]
+    tokens = temp
+
+    level = 0
+    ptable = False
+    plevel = 0
+    # Loop through tokens
     index = 0
-    while index < len(split)-1:
-        key = split[index]
-        pair = split[index+1]
-        if key == '':
-            index += 1
+    while index < len(tokens)-1:
+        key = tokens[index]
+        pair = tokens[index+1]
+    #Mesh
+        if key.lower() == '{':
+            level +=1
+            index +=1
+            continue
+        if key.lower() == '}':
+            level -=1
+            index +=1
+            if level < plevel: ptable=False
+            continue
+        if ptable:
+            index+=1
             continue
 
-    #Mesh
         if key.lower() == 'radius':
             print("LOG: '%s' = %s" % (key, pair))
             sfp.radius = float(pair)
@@ -287,35 +330,32 @@ def load(context, filepath):
 
         if key.lower() == 'midpos':
             print("LOG: '%s' = {%s, %s, %s}" % (key, 
-                split[index+1],
-                split[index+2],
-                split[index+3]))
-            sfp.midpos[0] = float(split[index+1])
-            sfp.midpos[1] = float(split[index+2])
-            sfp.midpos[2] = float(split[index+3])
-            index+=4
+                tokens[index+2],
+                tokens[index+3],
+                tokens[index+4]))
+            sfp.midpos[0] = float(tokens[index+2])
+            sfp.midpos[1] = float(tokens[index+3])
+            sfp.midpos[2] = float(tokens[index+4])
+            index+=6
             continue
 
         if key.lower() == 'tex1':
-            print("LOG: '%s' = %s" % (key, pair))
-            sfp.tex1 = pair
+            sfp.tex1 = pair.replace('\"','')
+            print("LOG: '%s' = %s" % (key, sfp.tex1))
             index +=2
             continue
 
         if key.lower() == 'tex2':
             print("LOG: '%s' = %s" % (key, pair))
-            sfp.tex2 = pair
+            sfp.tex2 = pair.replace('\"','')
             index +=2
             continue
     # Other
         if key.lower() == 'pieces':
             print("LOG: '%s' processed later" % key)
+            ptable = True
+            plevel = level+1
             index+=1
-            continue
-
-        if key.lower() == 'offset':
-            print("WARN: '%s' not implemented yet" % key)
-            index+=4
             continue
 
         if key.lower() == 'numpieces':
@@ -333,24 +373,17 @@ def load(context, filepath):
             index+=2
             continue
 
-
         print("LOG: '%s' - not recognised" %key)
         index +=1
 
-    # tokenize mesh lua and clean up
-    cleansplit = []
-    split = re.split('([{}])|[= "\n\t,]+|--.*\n',meshlua)
-    for i in split:
-        if i == None:
-            continue
-        if i == '':
-            continue
-        cleansplit = cleansplit + [i]
+    #find the beginning of the pieces subtable
+    begin = tokens.index('pieces')+2
+    sfp.rootObject = tokens[begin]
+    load_heirarchy(context, tokens, index=begin)
 
-    #cut off beginning
-    begin = cleansplit.index('pieces')+2
-    sfp.rootObject = cleansplit[begin]
-    load_heirarchy(context,cleansplit, index=begin)
+    imagefilepath = basepath + "/unittextures/"
+    bpy.ops.image.open(filepath=imagefilepath+sfp.tex1)
+    bpy.ops.image.open(filepath=imagefilepath+sfp.tex2)
 
     return {'FINISHED'}
 
@@ -376,7 +409,7 @@ def load_heirarchy(context, meshlua, parent = None, index=0):
             index += 6
             continue
         if level == 0:
-            print("LOG: loading heirarchy info for %s" % meshlua[index])
+            print("LOG: %s" % meshlua[index])
             # select object
             bpy.ops.object.select_all(action='DESELECT')
             obj = context.scene.objects[meshlua[index]]

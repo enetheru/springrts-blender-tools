@@ -210,9 +210,9 @@ def write_heirarchy(node,f,level, count):
     #Write piece name and opening brackets
     f.write("\t" * (level + 2))
     if node.name == node.data.name:
-        f.write("%s = {\n" % node.name.lower())
+        f.write("%s = {\n" % node.name)
     else:
-        f.write("%s_%s = {\n" % (node.name.lower(), node.data.name.lower()))
+        f.write("%s_%s = {\n" % (node.name, node.data.name))
     level = level + 1
     
     #Write offset
@@ -238,12 +238,6 @@ def write_heirarchy(node,f,level, count):
 def write_obj(context, filepath):
     # Get spring feature properties
     sfp = bpy.context.scene.sfp
-
-    # Preparing Scene for export
-    # Rename objects to remove unrecognised characters
-    for k in bpy.data.objects:
-        k.name = re.sub('\.','_',k.name)
-        k.data.name = re.sub('\.','_',k.data.name)
 
     # Get the root node
     root_node = bpy.data.objects[sfp.rootObject]
@@ -346,6 +340,12 @@ def export(context, filepath):
     if check_uvmaps(rootObject):
         raise RuntimeError("ERROR: not all objects have UV Maps defined")
         return {'FINISHED'}
+
+    # rename objects to conform to acceptable limits
+    for k in bpy.data.objects:
+        k.name = re.sub('\.','_',k.name).lower()
+        k.data.name = re.sub('\.','_',k.data.name).lower()
+    sfp.rootObject = re.sub('\.','_',sfp.rootObject).lower()
 
     print("LOG: Creating Directory Structure")
     #create base directory

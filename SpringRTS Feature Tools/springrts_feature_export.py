@@ -218,9 +218,9 @@ def write_heirarchy(node,f,level, count):
     #Write offset
     f.write("\t" * (level + 2))
     f.write("offset = {%.3f, %.3f, %.3f},\n" % (
-        node.matrix_local[0][3],
-        node.matrix_local[2][3],
-        node.matrix_local[1][3]*(-1)))
+        node.matrix_world[0][3],
+        node.matrix_world[2][3],
+        node.matrix_world[1][3]*(-1)))
 
     #recursively do the children
     for j in node.children:
@@ -307,7 +307,7 @@ def write_obj(context, filepath):
     # numpieces
     f.write("\tnumpieces = %i,\n" %numpieces)
     f.write("\tglobalvertexoffsets = true,\n")
-    f.write("\tlocalpieceoffsets = true,\n")
+    f.write("\tlocalpieceoffsets = false,\n")
 
     #finish
     f.write("\n}\nreturn "+os.path.basename(filepath))

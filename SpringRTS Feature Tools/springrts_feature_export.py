@@ -78,7 +78,7 @@ def pre_recurse(context, node):
         bpy.ops.object.mode_set(toggle=True)
 
     # invert UV Maps
-    for uvloop in node.data.uv_layers.active.data: uvloop.uv[1] = uvloop.uv[1] * -1 + 1
+#    for uvloop in node.data.uv_layers.active.data: uvloop.uv[1] = uvloop.uv[1] * -1 + 1
     
     #recurse through children
     for i in node.children: pre_recurse(context, i)
@@ -390,6 +390,6 @@ def post_recurse(context, node):
     node.select = True
     bpy.context.scene.objects.active = node
 
-    for uvloop in node.data.uv_layers.active.data: uvloop.uv[1] = uvloop.uv[1] * -1 + 1
+#    for uvloop in node.data.uv_layers.active.data: uvloop.uv[1] = uvloop.uv[1] * -1 + 1
 
     for i in node.children: post_recurse(context, i)

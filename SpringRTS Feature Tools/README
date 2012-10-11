@@ -3,16 +3,6 @@
 Enetheru, Samuel Nicholas, nicholas.samuel@gmail.com
 
 = Notes =
-== UV Invert ==
-The UV Coordinates used in spring are inverted on the Y axis compared
-to blender, You have two options to resolve the difference, invert the
-UV Coords before exporting, or invert the images. My preference is to
-invert the images as they require processing to get the channels in
-the right order.
-I have a composite node setup to do all the required operations,
-or I have a shell script using imagemagick.
-I want to put it into the blender interface though so python.
-
 == Conversion to and from coordinate space ==
 from Blender's XYZ -> spring needs to use (X)(Z)(-Y)
 from Spring's XYZ -> blender needs to use (X)(-Z)(Y)

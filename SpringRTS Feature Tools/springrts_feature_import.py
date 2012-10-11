@@ -22,8 +22,8 @@ def load(context, filepath):
     sfp = bpy.context.scene.sfp
 
     #find base path
-    basepath = os.path.dirname(filepath)
-    basepath = os.path.dirname(basepath)
+    dirname = os.path.dirname(filepath)
+    dirname = os.path.dirname(dirname)
 
     #FIXME
     meshname = ""
@@ -276,7 +276,7 @@ def load(context, filepath):
         index +=1
 
     #import mesh
-    meshfilepath = basepath + "/objects3d/" + meshname
+    meshfilepath = dirname + "/objects3d/" + meshname
     print("LOG: importing obj mesh")
     print("LOG: %s" % meshfilepath)
 
@@ -380,12 +380,13 @@ def load(context, filepath):
 
     #find the beginning of the pieces subtable
     begin = tokens.index('pieces')+2
-    sfp.rootObject = tokens[begin]
     load_heirarchy(context, tokens, index=begin)
 
-    imagefilepath = basepath + "/unittextures/"
-    bpy.ops.image.open(filepath=imagefilepath+sfp.tex1)
-    bpy.ops.image.open(filepath=imagefilepath+sfp.tex2)
+    imagefilepath = dirname + "/unittextures/"
+    if sfp.tex1 != '':
+        bpy.ops.image.open(filepath=imagefilepath+sfp.tex1)
+    if sfp.tex2 != '':
+        bpy.ops.image.open(filepath=imagefilepath+sfp.tex2)
 
     return {'FINISHED'}
 
@@ -421,6 +422,8 @@ def load_heirarchy(context, meshlua, parent = None, index=0):
             if parent != None:
                 context.scene.objects.active = parent
                 bpy.ops.object.parent_set()
+            else:
+                context.scene.sfp.rootObject = token
             index += 1
             continue
         if level > 0:

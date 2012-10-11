@@ -91,9 +91,15 @@ class ExportSpringRTSFeature(Operator, ExportHelper):
             options={'HIDDEN'},
             )
 
+    invertUV = bpy.props.BoolProperty(
+        name = "Invert UV's",
+        description = "Invert uv coordinates",
+        default = False
+        )
+
     def execute(self, context):
         print("== Export SpringRTS feature ==")
-        return springrts_feature_export.export(context, self.filepath)
+        return springrts_feature_export.export(self, context)
 
 #########################
 # User Interface Panels #

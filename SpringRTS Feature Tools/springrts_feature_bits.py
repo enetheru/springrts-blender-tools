@@ -185,8 +185,6 @@ def update_collision_volume(self, context):
         object.location.y = (sfp.collisionVolumeOffsets[2] + sfp.midpos[2]) * -1
         object.location.z = sfp.collisionVolumeOffsets[1] + sfp.midpos[1]
 
-    return None
-
 def root_object_check(self, context):
     # Get spring feature properties
     sfp = bpy.context.scene.sfp
@@ -250,7 +248,7 @@ def create_SME_objects(self, context):
             segments=12,
             ring_count=12,
             enter_editmode=True)
-        bpy.ops.transform.rotate(value=(1.5708,),axis=(1,0,0))
+        bpy.ops.transform.rotate(value=1.5708,axis=(1,0,0))
         bpy.ops.object.editmode_toggle()
         context.active_object.data.name="SME_occlusion"
         bpy.ops.object.delete()
@@ -276,14 +274,14 @@ def create_SME_objects(self, context):
         bpy.ops.object.delete()
     if not "SME_ellipsoid" in bpy.data.meshes:
         bpy.ops.mesh.primitive_uv_sphere_add(segments=12,ring_count=12,enter_editmode=True)
-        bpy.ops.transform.rotate(value=(1.5708,), axis=(1,0,0))
+        bpy.ops.transform.rotate(value=1.5708, axis=(1,0,0))
         bpy.ops.transform.resize(value=(0.5,0.5,0.5))
         bpy.ops.object.editmode_toggle()
         context.active_object.data.name="SME_ellipsoid"
         bpy.ops.object.delete()
     if not "SME_cylX" in bpy.data.meshes:
         bpy.ops.mesh.primitive_cylinder_add(vertices=12,enter_editmode=True)
-        bpy.ops.transform.rotate(value=(1.5708,), axis=(0,1,0))
+        bpy.ops.transform.rotate(value=1.5708, axis=(0,1,0))
         bpy.ops.transform.resize(value=(0.5,0.5,0.5))
         bpy.ops.object.editmode_toggle()
         context.active_object.data.name="SME_cylX"
@@ -296,7 +294,7 @@ def create_SME_objects(self, context):
         bpy.ops.object.delete()
     if not "SME_cylZ" in bpy.data.meshes:
         bpy.ops.mesh.primitive_cylinder_add(vertices=12,enter_editmode=True)
-        bpy.ops.transform.rotate(value=(1.5708,), axis=(1,0,0))
+        bpy.ops.transform.rotate(value=1.5708, axis=(1,0,0))
         bpy.ops.transform.resize(value=(0.5,0.5,0.5))
         bpy.ops.object.editmode_toggle()
         context.active_object.data.name="SME_cylZ"

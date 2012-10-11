@@ -95,7 +95,6 @@ class ExportSpringRTSFeature(Operator, ExportHelper):
         print("== Export SpringRTS feature ==")
         return springrts_feature_export.export(context, self.filepath)
 
-
 #########################
 # User Interface Panels #
 #########################
@@ -117,6 +116,7 @@ class SpringRTSFeature(bpy.types.Panel):
         layout = self.layout
         sfp = context.scene.sfp
 
+        layout.prop(sfp, 'name')
         layout.prop(sfp, 'description')
         row = layout.row()
         col1 = row.split()
@@ -227,12 +227,12 @@ class SpringRTSFeatureImages(bpy.types.Panel):
         row = layout.row()
         row.prop_search(sfp, 'texSpecular', bpy.data, 'images')
 
-
 ##########################
 # Feature Property Group #
 ##########################
 
 class SpringRTSFeaturePropertyGroup(bpy.types.PropertyGroup):
+    name = bpy.props.StringProperty(name="Name", default="myFeature")
     description = bpy.props.StringProperty(name="Description")
 
 #General
@@ -448,8 +448,6 @@ class SpringRTSFeaturePropertyGroup(bpy.types.PropertyGroup):
         name = "Specular",
         description = "Specular Addition")
 
-
-
 ###################################################
 # Functions cause i was copying obj way of things #
 ###################################################
@@ -460,7 +458,6 @@ def menu_func_import(self, context):
 
 def menu_func_export(self, context):
     self.layout.operator(ExportSpringRTSFeature.bl_idname, text="SpringRTS Feature")
-
 
 ################
 # Registration #
@@ -504,7 +501,6 @@ def unregister():
     bpy.utils.unregister_class(SpringRTSFeature)
     bpy.utils.unregister_class(SpringRTSFeatureMesh)
     bpy.utils.unregister_class(SpringRTSFeatureImages)
-
 
 if __name__ == "__main__":
     register()

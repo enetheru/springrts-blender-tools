@@ -35,7 +35,7 @@ def export(context, filepath):
     pre(context)
     # Write features definition
     write_featuredef(context, dirname)
-    # Write mesh heirarchy
+    # Write mesh hierarchy
     write_meshdef(context, dirname)
     # write obj stuff
     write_obj(context, dirname)
@@ -338,7 +338,7 @@ def write_mesh_hierarchy(node, level, count, f):
 
     #recursively do the children
     for j in node.children:
-        count = write_hierarchy(j, level, count, f)
+        count = write_mesh_hierarchy(j, level, count, f)
     level = level - 1
 
     #closing brackets

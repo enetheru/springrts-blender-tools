@@ -152,6 +152,7 @@ def load(context, filepath):
             continue
 
         if key.lower() == 'resurrectable':
+            pair =  pair.replace('\"','')
             if pair == '-1':
                 print("LOG: '%s' = first" % key)
                 sfp.resurrectable = 'first'
@@ -223,6 +224,7 @@ def load(context, filepath):
 
     #Collision Volume
         if key.lower() == 'collisionvolumetype':
+            pair =  pair.replace('\"','')
             if pair == 'box':
                 sfp.collisionVolumeType = 'SME_box'
             elif pair == 'ellipse':

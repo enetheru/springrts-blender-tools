@@ -312,15 +312,13 @@ def write_meshdef(context, dirname):
         print("WARN: Damage not specified, skipping.")
 
     # textures
-    if sfp.tex1 != None:
-        f.write("\ttex1 = \"%s\",\n" % sfp.tex1)
-    else:
-        f.write("\t--tex1 = \"%s\",\n" % sfp.tex1)
+    if not(sfp.tex1 == None or sfp.tex1 == ''):
+        texture1 = os.path.basename(bpy.data.images[sfp.tex1].filepath)
+        f.write("\ttex1 = \"%s\",\n" % texture1)
 
-    if sfp.tex2 != None:
-        f.write("\ttex2 = \"%s\",\n" % sfp.tex2)
-    else:
-        f.write("\t--tex2 = \"%s\",\n" % sfp.tex2)
+    if not(sfp.tex2 == None or sfp.tex2 == ''):
+        texture2 = os.path.basename(bpy.data.images[sfp.tex2].filepath)
+        f.write("\ttex2 = \"%s\",\n" % texture2)
 
     # numpieces
     f.write("\tnumpieces = %i,\n" %numpieces)
@@ -403,11 +401,13 @@ def copy_images(context, dirname):
     #creating directory
     os.makedirs(dirname+"/unittextures",exist_ok=True)
     # Copy images
-    #if image assigned to root node, use
-    if sfp.tex1 != None:
-        sourcepath = bpy.data.images[sfp.tex1].save_render(dirname+"/unittextures/"+sfp.tex1)
-    if sfp.tex2 != None:
-        sourcepath = bpy.data.images[sfp.tex2].save_render(dirname+"/unittextures/"+sfp.tex2)
+    if not(sfp.tex1 == None or sfp.tex1 == ''):
+        texture1 = os.path.basename(bpy.data.images[sfp.tex1].filepath)
+        bpy.data.images[sfp.tex1].save_render(dirname+"/unittextures/"+texture1)
+
+    if not(sfp.tex2 == None or sfp.tex2 == ''):
+        texture2 = os.path.basename(bpy.data.images[sfp.tex2].filepath)
+        bpy.data.images[sfp.tex1].save_render(dirname+"/unittextures/"+texture2)
 
 def post(self, context):
     # Get spring feature properties

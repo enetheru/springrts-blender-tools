@@ -18,13 +18,13 @@
 
 import bpy,os,re
     
-def export(context, filepath):
+def export(self, context):
     # Get spring feature properties
     sfp = bpy.context.scene.sfp
 
     # get base directory
-    dirname = os.path.dirname(filepath)
-    sfp.name = os.path.basename(filepath)
+    dirname = os.path.dirname(self.filepath)
+    sfp.name = os.path.basename(self.filepath)
 
     # check if root node exists
     if not sfp.rootObject in context.scene.objects:
@@ -32,24 +32,30 @@ def export(context, filepath):
         return {'FINISHED'}
 
     # prepare
-    pre(context)
+    pre(self, context)
     # Write features definition
     write_featuredef(context, dirname)
     # Write mesh hierarchy
     write_meshdef(context, dirname)
     # write obj stuff
     write_obj(context, dirname)
+    # Image
+    copy_images(context, dirname)
     # cleanup
-    post(context)
+    post(self, context)
 
     return {'FINISHED'}
 
-def pre(context):
+def pre(self, context):
     # Get spring feature properties
     sfp = bpy.context.scene.sfp
-    pre_recurse(context, context.scene.objects[sfp.rootObject])
 
-def pre_recurse(context, node):
+    # get root object
+    root = context.scene.objects[sfp.rootObject]
+    #Prepare all objects in the hierarchy
+    pre_recurse(self, context, root)
+
+def pre_recurse(self, context, node):
     # if not mesh skip
     if node.type != 'MESH': return
 
@@ -69,7 +75,6 @@ def pre_recurse(context, node):
     node.name = re.sub('\.','_',node.name).lower()
     node.data.name = re.sub('\.','_',node.data.name).lower()
 
-
     # create UV maps
     if node.data.uv_textures.active == None:
         print("WARN: no UV coordinates specified for %s, Creating" % node.name)
@@ -78,10 +83,11 @@ def pre_recurse(context, node):
         bpy.ops.object.mode_set(toggle=True)
 
     # invert UV Maps
-#    for uvloop in node.data.uv_layers.active.data: uvloop.uv[1] = uvloop.uv[1] * -1 + 1
+    if self.invertUV:
+        for uvloop in node.data.uv_layers.active.data: uvloop.uv[1] = uvloop.uv[1] * -1 + 1
     
     #recurse through children
-    for i in node.children: pre_recurse(context, i)
+    for i in node.children: pre_recurse(self, context, i)
 
 def write_featuredef(context, dirname):
     # Get spring feature properties
@@ -374,12 +380,27 @@ def write_obj(context, dirname):
         use_materials = False,
         use_triangles = True)
 
-def post(context):
+def copy_images(context, dirname):
     # Get spring feature properties
     sfp = bpy.context.scene.sfp
-    post_recurse(context, context.scene.objects[sfp.rootObject])
+    # Get the root node
+    root_node = bpy.data.objects[sfp.rootObject]
 
-def post_recurse(context, node):
+    #creating directory
+    os.makedirs(dirname+"/unittextures",exist_ok=True)
+    # Copy images
+    #if image assigned to root node, use
+    if sfp.tex1 != None:
+        sourcepath = bpy.data.images[sfp.tex1].save_render(dirname+"/unittextures/"+sfp.tex1)
+    if sfp.tex2 != None:
+        sourcepath = bpy.data.images[sfp.tex2].save_render(dirname+"/unittextures/"+sfp.tex2)
+
+def post(self, context):
+    # Get spring feature properties
+    sfp = bpy.context.scene.sfp
+    post_recurse(self, context, context.scene.objects[sfp.rootObject])
+
+def post_recurse(self, context, node):
     # if not mesh skip
     if node.type != 'MESH': return count
 
@@ -390,6 +411,7 @@ def post_recurse(context, node):
     node.select = True
     bpy.context.scene.objects.active = node
 
-#    for uvloop in node.data.uv_layers.active.data: uvloop.uv[1] = uvloop.uv[1] * -1 + 1
+    if self.invertUV:
+        for uvloop in node.data.uv_layers.active.data: uvloop.uv[1] = uvloop.uv[1] * -1 + 1
 
-    for i in node.children: post_recurse(context, i)
+    for i in node.children: post_recurse(self, context, i)

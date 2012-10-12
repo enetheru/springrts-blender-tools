@@ -42,26 +42,43 @@ from bpy.props import StringProperty, BoolProperty, EnumProperty
 from bpy.types import Operator
 from . import springrts_feature_bits, springrts_feature_import, springrts_feature_export
 
-class SpringRTSFeatureCalculateRadius(Operator):
-    """Calculate radius of feature"""
-    bl_idname = "springrts_feature.calculate_radius"
-    bl_label = "Calculate SpringRTS Feature Radius"
-
-    def execute(self, context):
-        springrts_feature_bits.calculate_radius(self, context)
-        return {'FINISHED'}
-
 #############
 # Operators #
 #############
-
-class SpringRTSFeatureCalculateMidpos(Operator):
-    """Calculate midpos of feature"""
-    bl_idname = "springrts_feature.calculate_midpos"
-    bl_label = "Calculate SpringRTS Feature Midpos"
+class SpringRTSFeatureCVScaleCalc(Operator):
+    """Calculate the Collision Volume Scale of feature"""
+    bl_idname = "springrts_feature.cv_scale_calc"
+    bl_label = "Calculate SpringRTS Feature Collision Volume Scale"
 
     def execute(self, context):
-        springrts_feature_bits.calculate_midpos(self, context)
+        springrts_feature_bits.cv_scale_calc(self, context)
+        return {'FINISHED'}
+
+class SpringRTSFeatureCVOffsetCalc(Operator):
+    """Calculate the collision volume offset of feature"""
+    bl_idname = "springrts_feature.cv_offset_calc"
+    bl_label = "Calculate SpringRTS Feature Collision Volume Offset"
+
+    def execute(self, context):
+        springrts_feature_bits.cv_offset_calc(self, context)
+        return {'FINISHED'}
+
+class SpringRTSFeatureOVRadiusCalc(Operator):
+    """Calculate the occlusion volume radius of feature"""
+    bl_idname = "springrts_feature.ov_radius_calc"
+    bl_label = "Calculate SpringRTS Feature Occlusion Volume Radius"
+
+    def execute(self, context):
+        springrts_feature_bits.ov_radius_calc(self, context)
+        return {'FINISHED'}
+
+class SpringRTSFeatureOVMidposCalc(Operator):
+    """Calculate the occlusion volume midpos of feature"""
+    bl_idname = "springrts_feature.ov_midpos_calc"
+    bl_label = "Calculate SpringRTS Feature Occlusion Volume Midpos"
+
+    def execute(self, context):
+        springrts_feature_bits.ov_midpos_calc(self, context)
         return {'FINISHED'}
 
 class ImportSpringRTSFeature(Operator, ImportHelper):
@@ -163,8 +180,8 @@ class SpringRTSFeature(bpy.types.Panel):
 
         box = layout.box()
         row = box.row()
-        row.label(text="footprint:")
-        row.prop(sfp, 'footprint')
+        row.label(text="Footprint:")
+        row.prop(sfp, 'footprint', "Show")
         row = box.row(align=True)
         row.prop(sfp, 'blocking')
         row.prop(sfp, 'footprintX')
@@ -180,9 +197,11 @@ class SpringRTSFeature(bpy.types.Panel):
         row = box.row()
         row.active = sfp.collisionEditMode != 'grab'
         row.prop(sfp, 'collisionVolumeScales')
+        row.operator('springrts_feature.cv_scale_calc', "Recalc")
         row = box.row()
         row.active = sfp.collisionEditMode != 'grab'
         row.prop(sfp, 'collisionVolumeOffsets')
+        row.operator('springrts_feature.cv_offset_calc', "Recalc")
 
 class SpringRTSFeatureMesh(bpy.types.Panel):
     """Creates a Panel in the scene context of the properties editor"""
@@ -212,11 +231,11 @@ class SpringRTSFeatureMesh(bpy.types.Panel):
         row = box.row()
         row.active = sfp.occlusionEditMode != 'grab'
         row.prop(sfp, 'radius')
-        row.operator('springrts_feature.calculate_radius', "Recalc")
+        row.operator('springrts_feature.ov_radius_calc', "Recalc")
         row = box.row()
         row.active = sfp.occlusionEditMode != 'grab'
-        row.prop(sfp, 'midpos', "")
-        row.operator('springrts_feature.calculate_midpos', "Recalc")
+        row.prop(sfp, 'midpos')
+        row.operator('springrts_feature.ov_midpos_calc', "Recalc")
 
 class SpringRTSFeatureImages(bpy.types.Panel):
     """Creates a Panel in the scene context of the properties editor"""
@@ -244,7 +263,7 @@ class SpringRTSFeatureImages(bpy.types.Panel):
 ##########################
 
 class SpringRTSFeaturePropertyGroup(bpy.types.PropertyGroup):
-    name = bpy.props.StringProperty(name="Name", default="myFeature")
+    name = bpy.props.StringProperty(name="Name")
     description = bpy.props.StringProperty(name="Description")
 
 #General
@@ -492,8 +511,10 @@ def register():
     bpy.types.INFO_MT_file_import.append(menu_func_import)
 
     # Register other operators
-    bpy.utils.register_class(SpringRTSFeatureCalculateRadius)
-    bpy.utils.register_class(SpringRTSFeatureCalculateMidpos)
+    bpy.utils.register_class(SpringRTSFeatureOVRadiusCalc)
+    bpy.utils.register_class(SpringRTSFeatureOVMidposCalc)
+    bpy.utils.register_class(SpringRTSFeatureCVScaleCalc)
+    bpy.utils.register_class(SpringRTSFeatureCVOffsetCalc)
 
     # Register Scene Menu Panels
     bpy.utils.register_class(SpringRTSFeature)
@@ -509,6 +530,12 @@ def unregister():
 
     bpy.utils.unregister_class(ExportSpringRTSFeature)
     bpy.utils.unregister_class(ImportSpringRTSFeature)
+
+    # Unregister other operators
+    bpy.utils.unregister_class(SpringRTSFeatureOVRadiusCalc)
+    bpy.utils.unregister_class(SpringRTSFeatureOVMidposCalc)
+    bpy.utils.unregister_class(SpringRTSFeatureCVScaleCalc)
+    bpy.utils.unregister_class(SpringRTSFeatureCVOffsetCalc)
 
     bpy.utils.unregister_class(SpringRTSFeature)
     bpy.utils.unregister_class(SpringRTSFeatureMesh)

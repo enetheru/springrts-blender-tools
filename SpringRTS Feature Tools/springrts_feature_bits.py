@@ -18,6 +18,80 @@
 
 import bpy,mathutils
 
+def AABB_recurse(
+    node,
+    first = True,
+    aabb = [mathutils.Vector((0.0,0.0,0.0)), mathutils.Vector((0.0,0.0,0.0))]):
+    # Skip if not mesh
+    if node.type != 'MESH': return aabb
+
+    offset = mathutils.Vector(
+        (node.matrix_world[0][3],
+        node.matrix_world[1][3],
+        node.matrix_world[2][3]))
+
+    for i in node.data.vertices:
+        if first == True:
+            aabb[0] = i.co + offset
+            aabb[1] = i.co + offset
+            first = False
+        aabb[0].x = min(aabb[0].x, i.co.x + offset.x)
+        aabb[0].y = min(aabb[0].y, i.co.y + offset.y)
+        aabb[0].z = min(aabb[0].z, i.co.z + offset.z)
+        aabb[1].x = max(aabb[1].x, i.co.x + offset.x)
+        aabb[1].y = max(aabb[1].y, i.co.y + offset.y)
+        aabb[1].z = max(aabb[1].z, i.co.z + offset.z)
+
+    for j in node.children:
+        aabb = AABB_recurse(j, first, aabb)
+    print("LOG: AABB_recurse = %s" % aabb)
+
+    return aabb
+
+def cv_scale_calc(self, context):
+    # Get spring feature properties
+    sfp = bpy.context.scene.sfp
+    # Abort if no root object
+    if not sfp.rootObject in context.scene.objects:
+        raise RuntimeError("ERROR: You need to make sure to set the root node")
+        return {'FINISHED'}
+    rootObject = context.scene.objects[sfp.rootObject]
+    aabb = AABB_recurse(rootObject)
+    mag = aabb[0] * -1 + aabb[1]
+    print("LOG: cv_scale_calc = %s" % mag)
+    sfp.collisionVolumeScales[0] = mag[0]
+    sfp.collisionVolumeScales[1] = mag[2]
+    sfp.collisionVolumeScales[2] = mag[1]
+    return
+
+def cv_offset_calc(self, context):
+    # Get spring feature properties
+    sfp = bpy.context.scene.sfp
+    # Abort if no root object
+    if not sfp.rootObject in context.scene.objects:
+        raise RuntimeError("ERROR: You need to make sure to set the root node")
+        return {'FINISHED'}
+
+    rootObject = context.scene.objects[sfp.rootObject]
+    aabb = AABB_recurse(rootObject)
+    centre = (aabb[0] + aabb[1]) * 0.5
+    print("LOG: cv_offset_calc = %s" % centre)
+    sfp.collisionVolumeOffsets[0] = centre[0] - sfp.midpos[0]
+    sfp.collisionVolumeOffsets[1] = centre[2] - sfp.midpos[1]
+    sfp.collisionVolumeOffsets[2] = (centre[1] * -1) - sfp.midpos[2]
+    return
+
+def ov_radius_calc(self, context):
+    # Get spring feature properties
+    sfp = bpy.context.scene.sfp
+    # Abort if no root object
+    if not sfp.rootObject in context.scene.objects:
+        raise RuntimeError("ERROR: You need to make sure to set the root node")
+        return {'FINISHED'}
+    rootObject = context.scene.objects[sfp.rootObject]
+    sfp.radius = recurse_radius(rootObject) / 2.0
+    return {'FINISHED'}
+
 def recurse_radius(node, distance=0.0):
     # Get spring feature properties
     sfp = bpy.context.scene.sfp
@@ -42,48 +116,7 @@ def recurse_radius(node, distance=0.0):
         distance = recurse_radius(j, distance)
     return distance
 
-#def recurse_height(node,offset=mathutils.Vector((0.0,0.0,0.0)), height=0.0):
-#    
-#   if vertex distance is larger than distance
-#    for i in node.data.vertices:
-#        myheight = i.co.z + offset.z
-#        if myheight > height:
-#            height = myheight
-#   distance = vertex distance
-#    for j in node.children:
-#        offset = j.location
-#        height = recurse_height(j, offset, height)
-#    return height
-
-def recurse_midpos(
-    node,
-    bounds=[mathutils.Vector((0.0,0.0,0.0)), mathutils.Vector((0.0,0.0,0.0))],
-    first=True):
-    # Skip if not mesh
-    if node.type != 'MESH': return bounds
-    offset = mathutils.Vector(
-        (node.matrix_world[0][3],
-        node.matrix_world[1][3],
-        node.matrix_world[2][3]))
-
-    for i in node.data.vertices:
-        if first == True:
-            print("first vertex")
-            bounds[0] = i.co + offset
-            bounds[1] = i.co + offset
-            first = False
-        bounds[0].x = min(bounds[0].x, i.co.x + offset.x)
-        bounds[0].y = min(bounds[0].y, i.co.y + offset.y)
-        bounds[0].z = min(bounds[0].z, i.co.z + offset.z)
-        bounds[1].x = max(bounds[1].x, i.co.x + offset.x)
-        bounds[1].y = max(bounds[1].y, i.co.y + offset.y)
-        bounds[1].z = max(bounds[1].z, i.co.z + offset.z)
-
-    for j in node.children:
-        bounds = recurse_midpos(j, bounds, first)
-    return bounds
-
-def calculate_radius(self, context):
+def ov_midpos_calc(self, context):
     # Get spring feature properties
     sfp = bpy.context.scene.sfp
     # Abort if no root object
@@ -91,31 +124,11 @@ def calculate_radius(self, context):
         raise RuntimeError("ERROR: You need to make sure to set the root node")
         return {'FINISHED'}
     rootObject = context.scene.objects[sfp.rootObject]
-    sfp.radius = recurse_radius(rootObject) / 2.0
-    return {'FINISHED'}
-
-#def calculate_height(self, context):
-#    print("Calculate height")
-#    root = context.scene.objects[context.scene.root]
-#    mp = context.scene.midpos
-#    origin = mathutils.Vector((mp[0],mp[1],mp[2]))
-#    context.scene.height = recurse_height(root,root.location - origin)
-#    return {'FINISHED'}
-
-def calculate_midpos(self, context):
-    # Get spring feature properties
-    sfp = bpy.context.scene.sfp
-    # Abort if no root object
-    if not sfp.rootObject in context.scene.objects:
-        raise RuntimeError("ERROR: You need to make sure to set the root node")
-        return {'FINISHED'}
-    rootObject = context.scene.objects[sfp.rootObject]
-    bounds = recurse_midpos(rootObject)
-    centre = (bounds[0] + bounds[1]) * 0.5
+    aabb = AABB_recurse(rootObject)
+    centre = (aabb[0] + aabb[1]) * 0.5
     sfp.midpos[0] = centre.x
     sfp.midpos[1] = centre.z
     sfp.midpos[2] = centre.y * -1
-    return {'FINISHED'}
 
 def update_footprint(self, context):
     # Get spring feature properties
@@ -191,7 +204,6 @@ def root_object_check(self, context):
     # Dont allow non mehses to be chosen
     if context.scene.objects[sfp.rootObject].type != 'MESH':
         sfp.rootObject = ''
-    return None
 
 def update_occlusion_volume(self, context):
     # Get spring feature properties
@@ -236,7 +248,6 @@ def update_occlusion_volume(self, context):
         object.location.x = sfp.midpos[0]
         object.location.y = sfp.midpos[2] * -1
         object.location.z = sfp.midpos[1]
-    return None
 
 def create_SME_objects(self, context):
     # Get spring feature properties
@@ -306,7 +317,6 @@ def create_SME_objects(self, context):
             name = "SME_collisionvolume",
             object_data = bpy.data.meshes[sfp.collisionVolumeType])
         context.scene.objects.link(object)
-# parenting trick doesnt work for all use cases.        object.parent = context.scene.objects['SME_occlusion']
         object.show_name=True
         object.draw_type='WIRE'
         object.hide_render=True

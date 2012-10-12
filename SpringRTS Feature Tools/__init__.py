@@ -97,6 +97,12 @@ class ExportSpringRTSFeature(Operator, ExportHelper):
         default = False
         )
 
+    overwrite = bpy.props.BoolProperty(
+        name = "Overwrite",
+        description = "whether to overwrite existing files",
+        default = True
+        )
+
     def execute(self, context):
         print("== Export SpringRTS feature ==")
         return springrts_feature_export.export(self, context)

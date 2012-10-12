@@ -24,12 +24,19 @@ def export(self, context):
 
     # get base directory
     dirname = os.path.dirname(self.filepath)
-    sfp.name = os.path.basename(self.filepath)
+    print("LOG: exporting %s" % sfp.name)
+    if sfp.name == None or sfp.name == '':
+        sfp.name = os.path.basename(self.filepath)
 
     # check if root node exists
     if not sfp.rootObject in context.scene.objects:
         raise RuntimeError("ERROR: You need to make sure to set the root node")
         return {'FINISHED'}
+
+    if not self.overwrite:
+        if os.path.isfile(dirname+"/features/"+sfp.name+".lua"):
+            raise RuntimeError("ERROR: Files exist, not overwriting")
+            return {'CANCELLED'}
 
     # prepare
     pre(self, context)

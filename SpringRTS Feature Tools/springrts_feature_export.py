@@ -305,8 +305,15 @@ def write_meshdef(context, dirname):
         print("WARN: Damage not specified, skipping.")
 
     # textures
-    f.write("\ttex1 = \"%s\",\n" % sfp.tex1)
-    f.write("\t--tex2 = \"%s\",\n" % sfp.tex2)
+    if sfp.tex1 != None:
+        f.write("\ttex1 = \"%s\",\n" % sfp.tex1)
+    else:
+        f.write("\t--tex1 = \"%s\",\n" % sfp.tex1)
+
+    if sfp.tex2 != None:
+        f.write("\ttex2 = \"%s\",\n" % sfp.tex2)
+    else:
+        f.write("\t--tex2 = \"%s\",\n" % sfp.tex2)
 
     # numpieces
     f.write("\tnumpieces = %i,\n" %numpieces)

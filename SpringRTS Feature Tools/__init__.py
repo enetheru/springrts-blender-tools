@@ -237,27 +237,6 @@ class SpringRTSFeatureMesh(bpy.types.Panel):
         row.prop(sfp, 'midpos')
         row.operator('springrts_feature.ov_midpos_calc', "Recalc")
 
-class SpringRTSFeatureImages(bpy.types.Panel):
-    """Creates a Panel in the scene context of the properties editor"""
-    bl_label = "SpringRTS Feature Images Sources"
-    bl_idname = "SCENE_PT_SME_featureimages"
-    bl_space_type = 'PROPERTIES'
-    bl_region_type = 'WINDOW'
-    bl_context = "scene"
-
-    def draw(self, context):
-        layout = self.layout
-        sfp = context.scene.sfp
-
-        row = layout.row()
-        row.prop_search(sfp, 'texRGBA', bpy.data, 'images')
-        row = layout.row()
-        row.prop_search(sfp, 'texTeam', bpy.data, 'images')
-        row = layout.row()
-        row.prop_search(sfp, 'texAmbient', bpy.data, 'images')
-        row = layout.row()
-        row.prop_search(sfp, 'texSpecular', bpy.data, 'images')
-
 ##########################
 # Feature Property Group #
 ##########################
@@ -462,23 +441,6 @@ class SpringRTSFeaturePropertyGroup(bpy.types.PropertyGroup):
         description = "",
         update = springrts_feature_bits.update_occlusion_volume)
 
-# Source Images
-    texRGBA = bpy.props.StringProperty(
-        name = "Diffuse+Alpha",
-        description = "RGBA diffuse + Alpha")
-
-    texTeam = bpy.props.StringProperty(
-        name = "Team Mask",
-        description = "Team Colour Mask")
-
-    texAmbient = bpy.props.StringProperty(
-        name = "Ambient",
-        description = "Ambient Multiplier")
-
-    texSpecular = bpy.props.StringProperty(
-        name = "Specular",
-        description = "Specular Addition")
-
 ###################################################
 # Functions cause i was copying obj way of things #
 ###################################################
@@ -519,7 +481,6 @@ def register():
     # Register Scene Menu Panels
     bpy.utils.register_class(SpringRTSFeature)
     bpy.utils.register_class(SpringRTSFeatureMesh)
-    bpy.utils.register_class(SpringRTSFeatureImages)
 
 
 def unregister():
@@ -539,7 +500,6 @@ def unregister():
 
     bpy.utils.unregister_class(SpringRTSFeature)
     bpy.utils.unregister_class(SpringRTSFeatureMesh)
-    bpy.utils.unregister_class(SpringRTSFeatureImages)
 
 if __name__ == "__main__":
     register()

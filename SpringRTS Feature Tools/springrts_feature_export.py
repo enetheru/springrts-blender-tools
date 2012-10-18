@@ -362,7 +362,7 @@ def write_mesh_hierarchy(node, level, count, f):
     f.write("offset = {%.3f, %.3f, %.3f},\n" % (
         node.matrix_world[0][3],
         node.matrix_world[2][3],
-        node.matrix_world[1][3]*(-1)))
+        node.matrix_world[1][3] * -1))
 
     #recursively do the children
     for j in node.children:

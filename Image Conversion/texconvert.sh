@@ -35,12 +35,12 @@ if [ $? != 0 ] ; then echo -n -e "Terminating..." >&2 ; exit 1 ; fi
 # Note the quotes around `$TEMP': they are essential!
 eval set -- "$TEMP"
 
-HELP=false;VERBOSE=false;COMPRESS=true;DIFFUSE=;AMBIENT=;SPECULAR=;TEAMCOLOUR=;ALPHA=;OUTFILE=$3;BLUE=
+HELP=false;VERBOSE=true;COMPRESS=true;DIFFUSE=;AMBIENT=;SPECULAR=;TEAMCOLOUR=;ALPHA=;OUTFILE=;BLUE=;
 
 while true; do
   case "$1" in
     -h | --help ) print_help ; exit 0 ;;
-    -v | --verbose ) VERBOSE=true; shift ;;
+    -q | --quiet ) VERBOSE=false; shift ;;
          --nocompress ) COMPRESS=false; shift ;;
     -d | --diffuse ) DIFFUSE="$2"; shift 2 ;;
     -a | --ambient ) AMBIENT="$2"; shift 2 ;;
@@ -54,29 +54,36 @@ while true; do
   esac
 done
 
-
 # Checking for requirements
 command -v convert >/dev/null 2>&1 || { echo -n -e >&2 "Imagemagick is required please install"; exit 1; }
 command -v nvcompress >/dev/null 2>&1 || { echo -n -e >&2 "nvidia-texture-tools not found cannot compress images to dds format"; COMPRESS=false; }
 
-
 # Check to see if our diffuse texture has been specified.
-if [ "$DIFFUSE" == "" -a  $1 == "" ];
+if [ -z "$DIFFUSE" ];
     then
-        print_help;
-        echo -n -e "ERROR: No Diffuse File Specified";
-        exit 1;
-    else
-        DIFFUSE=$1; shift;
+        if [ -z $1 ];
+            then
+                print_help;
+                echo -n -e "ERROR: No Diffuse File Specified\n";
+                exit 1;
+            else
+                DIFFUSE=$1
+        fi
 fi
 
+echo "LOG: Checking diffuse file format"
 if ! identify $DIFFUSE; then echo "ERROR: $DIFFUSE not found or invalid format"; exit 1; fi
 
-if [ "$OUTFILE" == "" -a  $1 == "" ];
-    then echo -n -e "ERROR: No output prefix Specified";
-    else OUTFILE=$1; shift;
+# Check to see if output is specified.
+if [ -z "$OUTFILE" ];
+    then
+        if [ -z $2 ];
+            then
+                OUTFILE=${DIFFUSE%.*};
+            else
+                OUTFILE=$2
+        fi
 fi
-
 
 if [ $VERBOSE = true ]; then echo -e \
 "== Options: ==
@@ -89,7 +96,6 @@ Specular: $SPECULAR
 Team Colour: $TEAMCOLOUR
 OutPrefix: $OUTFILE\n";
 fi
-
 
 # Create Black greyscale image for use when image doesnt exist.
 if [ $VERBOSE = true ]; then echo -n "* Creating Temporary black and white images..."; fi

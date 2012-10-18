@@ -89,7 +89,7 @@ def ov_radius_calc(self, context):
         raise RuntimeError("ERROR: You need to make sure to set the root node")
         return {'FINISHED'}
     rootObject = context.scene.objects[sfp.rootObject]
-    sfp.radius = recurse_radius(rootObject) / 2.0
+    sfp.radius = recurse_radius(rootObject)
     return {'FINISHED'}
 
 def recurse_radius(node, distance=0.0):
@@ -145,8 +145,8 @@ def update_footprint(self, context):
 
     object.scale.x = sfp.footprintX * 8
     object.scale.y = sfp.footprintZ * 8
-    object.location.x = object.scale.x * -1.0
-    object.location.y = object.scale.y
+    object.location.x = (sfp.footprintX % 2) * -8
+    object.location.y = (sfp.footprintZ % 2) * 8
 
 def update_collision_volume(self, context):
     # Get spring feature properties
@@ -221,7 +221,7 @@ def update_occlusion_volume(self, context):
     if sfp.occlusionEditMode == 'grab':
         #Create drivers so values are updates when model is modified.
         fcurve = sfp.driver_add('radius')
-        fcurve.driver.expression = "bpy.data.objects['SME_occlusion'].scale.x / 2.0"
+        fcurve.driver.expression = "bpy.data.objects['SME_occlusion'].scale.x"
         fcurve = sfp.driver_add('midpos')
         fcurve[0].driver.expression = "bpy.data.objects['SME_occlusion'].location.x"
         fcurve[1].driver.expression = "bpy.data.objects['SME_occlusion'].location.z"
@@ -244,7 +244,7 @@ def update_occlusion_volume(self, context):
         for lock in object.lock_scale:
             lock=True
         # Change object transformations
-        object.scale.x = object.scale.y = object.scale.z = sfp.radius * 2
+        object.scale.x = object.scale.y = object.scale.z = sfp.radius
         object.location.x = sfp.midpos[0]
         object.location.y = sfp.midpos[2] * -1
         object.location.z = sfp.midpos[1]

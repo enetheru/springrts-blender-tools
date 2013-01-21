@@ -83,7 +83,7 @@ class SpringRTSFeatureOVMidposCalc(Operator):
 
 class ImportSpringRTSFeature(Operator, ImportHelper):
     """Load a SpringRTS feature"""
-    bl_idname = "import_springrts.feature"
+    bl_idname = "import_scene.springrts_feature"
     bl_label = "Import SpringRTS Feature"
     bl_options = {'PRESET', 'UNDO'}
 
@@ -491,6 +491,7 @@ def unregister():
 
     bpy.utils.unregister_class(ExportSpringRTSFeature)
     bpy.utils.unregister_class(ImportSpringRTSFeature)
+    bpy.utils.unregister_class(SpringRTSFeaturePropertyGroup)
 
     # Unregister other operators
     bpy.utils.unregister_class(SpringRTSFeatureOVRadiusCalc)

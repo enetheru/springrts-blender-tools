@@ -17,7 +17,12 @@
 # ##### END GPL LICENSE BLOCK #####
 
 import bpy,mathutils
-
+def panel_toggle(self, context):
+    sfp = context.object.sfp
+    if sfp.isFeature:
+        bpy.utils.register_class(SpringRTSFeatureMesh)
+    else:
+        bpy.utils.unregister_class(SpringRTSFeatureMesh)
 def AABB_recurse(
     node,
     first = True,
@@ -50,13 +55,9 @@ def AABB_recurse(
 
 def cv_scale_calc(self, context):
     # Get spring feature properties
-    sfp = bpy.context.scene.sfp
-    # Abort if no root object
-    if not sfp.rootObject in context.scene.objects:
-        raise RuntimeError("ERROR: You need to make sure to set the root node")
-        return {'FINISHED'}
-    rootObject = context.scene.objects[sfp.rootObject]
-    aabb = AABB_recurse(rootObject)
+    sfp = bpy.context.object.sfp
+
+    aabb = AABB_recurse(context.active_object)
     mag = aabb[0] * -1 + aabb[1]
     print("LOG: cv_scale_calc = %s" % mag)
     sfp.collisionVolumeScales[0] = mag[0]
@@ -66,14 +67,9 @@ def cv_scale_calc(self, context):
 
 def cv_offset_calc(self, context):
     # Get spring feature properties
-    sfp = bpy.context.scene.sfp
-    # Abort if no root object
-    if not sfp.rootObject in context.scene.objects:
-        raise RuntimeError("ERROR: You need to make sure to set the root node")
-        return {'FINISHED'}
+    sfp = bpy.context.object.sfp
 
-    rootObject = context.scene.objects[sfp.rootObject]
-    aabb = AABB_recurse(rootObject)
+    aabb = AABB_recurse(context.active_object)
     centre = (aabb[0] + aabb[1]) * 0.5
     print("LOG: cv_offset_calc = %s" % centre)
     sfp.collisionVolumeOffsets[0] = centre[0] - sfp.midpos[0]
@@ -83,18 +79,14 @@ def cv_offset_calc(self, context):
 
 def ov_radius_calc(self, context):
     # Get spring feature properties
-    sfp = bpy.context.scene.sfp
-    # Abort if no root object
-    if not sfp.rootObject in context.scene.objects:
-        raise RuntimeError("ERROR: You need to make sure to set the root node")
-        return {'FINISHED'}
-    rootObject = context.scene.objects[sfp.rootObject]
-    sfp.radius = recurse_radius(rootObject)
+    sfp = bpy.context.object.sfp
+
+    sfp.radius = recurse_radius(context.active_object)
     return {'FINISHED'}
 
 def recurse_radius(node, distance=0.0):
     # Get spring feature properties
-    sfp = bpy.context.scene.sfp
+    sfp = bpy.context.object.sfp
     # Skip if not mesh
     if node.type != 'MESH': return distance    
     # If vertex distance is larger than distance
@@ -118,13 +110,9 @@ def recurse_radius(node, distance=0.0):
 
 def ov_midpos_calc(self, context):
     # Get spring feature properties
-    sfp = bpy.context.scene.sfp
-    # Abort if no root object
-    if not sfp.rootObject in context.scene.objects:
-        raise RuntimeError("ERROR: You need to make sure to set the root node")
-        return {'FINISHED'}
-    rootObject = context.scene.objects[sfp.rootObject]
-    aabb = AABB_recurse(rootObject)
+    sfp = bpy.context.object.sfp
+
+    aabb = AABB_recurse(context.active_object)
     centre = (aabb[0] + aabb[1]) * 0.5
     sfp.midpos[0] = centre.x
     sfp.midpos[1] = centre.z
@@ -132,7 +120,7 @@ def ov_midpos_calc(self, context):
 
 def update_footprint(self, context):
     # Get spring feature properties
-    sfp = bpy.context.scene.sfp
+    sfp = bpy.context.object.sfp
 
     create_SME_objects(self, context)
 
@@ -150,7 +138,7 @@ def update_footprint(self, context):
 
 def update_collision_volume(self, context):
     # Get spring feature properties
-    sfp = bpy.context.scene.sfp
+    sfp = bpy.context.object.sfp
 
     create_SME_objects(self, context)
     object = bpy.data.objects["SME_collisionvolume"]
@@ -167,14 +155,14 @@ def update_collision_volume(self, context):
 
     if sfp.collisionEditMode == 'grab':
         #Create Drivers
-        fcurve = context.scene.sfp.driver_add('collisionVolumeScales')
+        fcurve = context.object.sfp.driver_add('collisionVolumeScales')
         fcurve[0].driver.expression = "bpy.data.objects['SME_collisionvolume'].scale.x"
         fcurve[1].driver.expression = "bpy.data.objects['SME_collisionvolume'].scale.z"
         fcurve[2].driver.expression = "bpy.data.objects['SME_collisionvolume'].scale.y"
-        fcurve = context.scene.sfp.driver_add('collisionVolumeOffsets')
-        fcurve[0].driver.expression = "bpy.data.objects['SME_collisionvolume'].location.x - bpy.context.scene.sfp.midpos[0]"
-        fcurve[1].driver.expression = "bpy.data.objects['SME_collisionvolume'].location.z - bpy.context.scene.sfp.midpos[1]"
-        fcurve[2].driver.expression = "(bpy.data.objects['SME_collisionvolume'].location.y * -1) - bpy.context.scene.sfp.midpos[2]"
+        fcurve = context.object.sfp.driver_add('collisionVolumeOffsets')
+        fcurve[0].driver.expression = "bpy.data.objects['SME_collisionvolume'].location.x - bpy.context.object.sfp.midpos[0]"
+        fcurve[1].driver.expression = "bpy.data.objects['SME_collisionvolume'].location.z - bpy.context.object.sfp.midpos[1]"
+        fcurve[2].driver.expression = "(bpy.data.objects['SME_collisionvolume'].location.y * -1) - bpy.context.object.sfp.midpos[2]"
         #Change attributes
         object.hide_select=False
         for lock in object.lock_location:
@@ -198,16 +186,9 @@ def update_collision_volume(self, context):
         object.location.y = (sfp.collisionVolumeOffsets[2] + sfp.midpos[2]) * -1
         object.location.z = sfp.collisionVolumeOffsets[1] + sfp.midpos[1]
 
-def root_object_check(self, context):
-    # Get spring feature properties
-    sfp = bpy.context.scene.sfp
-    # Dont allow non mehses to be chosen
-    if context.scene.objects[sfp.rootObject].type != 'MESH':
-        sfp.rootObject = ''
-
 def update_occlusion_volume(self, context):
     # Get spring feature properties
-    sfp = bpy.context.scene.sfp
+    sfp = bpy.context.object.sfp
 
     create_SME_objects(self, context)
     object = bpy.data.objects["SME_occlusion"]
@@ -251,7 +232,7 @@ def update_occlusion_volume(self, context):
 
 def create_SME_objects(self, context):
     # Get spring feature properties
-    sfp = bpy.context.scene.sfp
+    sfp = bpy.context.object.sfp
 
     # Occlusion Mesh and objects
     if not "SME_occlusion" in bpy.data.meshes:

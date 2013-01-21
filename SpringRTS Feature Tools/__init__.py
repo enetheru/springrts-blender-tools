@@ -83,7 +83,7 @@ class SpringRTSFeatureOVMidposCalc(Operator):
 
 class ImportSpringRTSFeature(Operator, ImportHelper):
     """Load a SpringRTS feature"""
-    bl_idname = "import_scene.springrts_feature"
+    bl_idname = "import_object.springrts_feature"
     bl_label = "Import SpringRTS Feature"
     bl_options = {'PRESET', 'UNDO'}
 
@@ -99,7 +99,7 @@ class ImportSpringRTSFeature(Operator, ImportHelper):
 
 class ExportSpringRTSFeature(Operator, ExportHelper):
     """Save a SpringRTS Feature"""
-    bl_idname = "export_scene.springrts_feature"
+    bl_idname = "export_object.springrts_feature"
     bl_label = 'Export SpringRTS Feature'
 
     filename_ext = ""
@@ -134,16 +134,17 @@ class SpringRTSFeature(bpy.types.Panel):
     bl_idname = "SCENE_PT_SFE_Attributes"
     bl_space_type = 'PROPERTIES'
     bl_region_type = 'WINDOW'
-    bl_context = "scene"
+    bl_context = "object"
 
     def draw_header(self, context):
         layout = self.layout
-        sfp = context.scene.sfp
-        # Switch on or off feature panels
+        sfp = context.object.sfp
+        # FIXME Switch on or off feature panels
 
     def draw(self, context):
         layout = self.layout
-        sfp = context.scene.sfp
+        sfp = context.object.sfp
+
 
         layout.prop(sfp, 'name')
         layout.prop(sfp, 'description')
@@ -209,15 +210,13 @@ class SpringRTSFeatureMesh(bpy.types.Panel):
     bl_idname = "SCENE_PT_SME_featuremesh"
     bl_space_type = 'PROPERTIES'
     bl_region_type = 'WINDOW'
-    bl_context = "scene"
+    bl_context = "object"
 
     def draw(self, context):
         layout = self.layout
         split = layout.split()
-        sfp = context.scene.sfp
+        sfp = context.object.sfp
 
-        row = layout.row()
-        row.prop_search(sfp, 'rootObject', context.scene, 'objects')
         row = layout.row()
         row.prop_search(sfp, 'tex1', bpy.data, 'images')
         row.prop_search(sfp, 'tex2', bpy.data, 'images')
@@ -242,6 +241,7 @@ class SpringRTSFeatureMesh(bpy.types.Panel):
 ##########################
 
 class SpringRTSFeaturePropertyGroup(bpy.types.PropertyGroup):
+    # FIXME isFeature = bpy.props.BoolProperty(name="Enable") turn on and off feature panels.
     name = bpy.props.StringProperty(name="Name")
     description = bpy.props.StringProperty(name="Description")
 
@@ -405,10 +405,6 @@ class SpringRTSFeaturePropertyGroup(bpy.types.PropertyGroup):
         update = springrts_feature_bits.update_collision_volume)
 
 # Mesh
-    rootObject = bpy.props.StringProperty(
-        name="Root Object",
-        update = springrts_feature_bits.root_object_check)
-
     tex1 = bpy.props.StringProperty(name = "tex1",
         description = "RGB diffuse and team overlay")
 
@@ -461,7 +457,7 @@ def register():
 
     # Register and use feature property group
     bpy.utils.register_class(SpringRTSFeaturePropertyGroup)
-    bpy.types.Scene.sfp = bpy.props.PointerProperty(
+    bpy.types.Object.sfp = bpy.props.PointerProperty(
         type=SpringRTSFeaturePropertyGroup)
 
     # Register export operator

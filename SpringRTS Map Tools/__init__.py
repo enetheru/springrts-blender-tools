@@ -198,30 +198,39 @@ class SpringRTSMapPropertyGroup(bpy.types.PropertyGroup):
         name = "Width",
         description = "X Dimension of the map",
         subtype = 'UNSIGNED',
-        default = 4)
+        min = 2,
+        max = 64,
+        step = 2,
+        default = 8)
 
     length = bpy.props.IntProperty(
         name = "Length",
         description = "Z Dimension of the map",
         subtype = 'UNSIGNED',
-        default = 4)
+        min = 2,
+        max = 64,
+        step = 2,
+        default = 8)
 
     hardness = bpy.props.IntProperty(
         name = "Hardness",
         description = "How resistant the map is to deforming",
         subtype = 'UNSIGNED',
+        min = 1,
         default = 1000)
 
     gravity = bpy.props.IntProperty(
         name="Gravity",
         description = "Gravity in Centimeters per second",
         subtype = 'UNSIGNED',
+        min = 0,
         default = 130)
 
     tidalStrength = bpy.props.IntProperty(
         name="Tidal Strength",
         description = "Strength of the tide, for tidal power generators",
         subtype = 'UNSIGNED',
+        min = 0,
         default = 20)
 
     maxMetal = bpy.props.FloatProperty(

@@ -106,7 +106,7 @@ if [ $VERBOSE = true ]; then echo "Done"; fi
 
 if [ "$AMBIENT" = "" ]; then AMBIENT=black_TEMP.tga; fi
 if [ "$SPECULAR" = "" ]; then SPECULAR=black_TEMP.tga; fi
-if [ "$TEAMCOLOUR" = "" ]; then TEAMCOLOUR=white_TEMP.tga; fi
+if [ "$TEAMCOLOUR" = "" ]; then TEAMCOLOUR=black_TEMP.tga; fi
 if [ "$BLUE" = "" ]; then BLUE=black_TEMP.tga; fi
 
 

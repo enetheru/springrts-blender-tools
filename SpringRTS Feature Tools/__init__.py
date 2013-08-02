@@ -146,8 +146,9 @@ class SpringRTSFeature(bpy.types.Panel):
         sfp = context.object.sfp
 
 
-        layout.prop(sfp, 'name')
+        layout.prop(context.object, 'name')
         layout.prop(sfp, 'description')
+        layout.prop(sfp, 'preset')
         row = layout.row()
         col1 = row.split()
         column = col1.column()
@@ -204,23 +205,6 @@ class SpringRTSFeature(bpy.types.Panel):
         row.prop(sfp, 'collisionVolumeOffsets')
         row.operator('springrts_feature.cv_offset_calc', "Recalc")
 
-class SpringRTSFeatureMesh(bpy.types.Panel):
-    """Creates a Panel in the scene context of the properties editor"""
-    bl_label = "SpringRTS Feature Mesh"
-    bl_idname = "SCENE_PT_SME_featuremesh"
-    bl_space_type = 'PROPERTIES'
-    bl_region_type = 'WINDOW'
-    bl_context = "object"
-
-    def draw(self, context):
-        layout = self.layout
-        split = layout.split()
-        sfp = context.object.sfp
-
-        row = layout.row()
-        row.prop_search(sfp, 'tex1', bpy.data, 'images')
-        row.prop_search(sfp, 'tex2', bpy.data, 'images')
-
         box = layout.box()
         row = box.row()
         row.label("Occlusion Volume")
@@ -242,7 +226,6 @@ class SpringRTSFeatureMesh(bpy.types.Panel):
 
 class SpringRTSFeaturePropertyGroup(bpy.types.PropertyGroup):
     # FIXME isFeature = bpy.props.BoolProperty(name="Enable") turn on and off feature panels.
-    name = bpy.props.StringProperty(name="Name")
     description = bpy.props.StringProperty(name="Description")
 
 #General
@@ -437,6 +420,14 @@ class SpringRTSFeaturePropertyGroup(bpy.types.PropertyGroup):
         description = "",
         update = springrts_feature_bits.update_occlusion_volume)
 
+    preset = bpy.props.EnumProperty(
+        name = "Preset",
+        items = (('none',"None","No Changes"),
+            ('tree',"Tree","Trees, between 32 and 64 units high or there abouts."),),
+        description = "Feature Preset",
+        update = springrts_feature_bits.preset_chosen)
+
+
 ###################################################
 # Functions cause i was copying obj way of things #
 ###################################################
@@ -476,7 +467,6 @@ def register():
 
     # Register Scene Menu Panels
     bpy.utils.register_class(SpringRTSFeature)
-    bpy.utils.register_class(SpringRTSFeatureMesh)
 
 
 def unregister():
@@ -496,7 +486,6 @@ def unregister():
     bpy.utils.unregister_class(SpringRTSFeatureCVOffsetCalc)
 
     bpy.utils.unregister_class(SpringRTSFeature)
-    bpy.utils.unregister_class(SpringRTSFeatureMesh)
 
 if __name__ == "__main__":
     register()

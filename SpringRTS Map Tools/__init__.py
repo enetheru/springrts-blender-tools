@@ -42,7 +42,7 @@ import bpy, os, re
 from bpy_extras.io_utils import ExportHelper,ImportHelper
 from bpy.props import StringProperty, BoolProperty, EnumProperty
 from bpy.types import Operator
-from . import springrts_map_features_export
+from . import springrts_map_features_export, springrts_map_features_import
 
 class ImportSpringRTSMapInfo(Operator, ExportHelper):
     """Save SpringRTS Map Info"""
@@ -72,9 +72,29 @@ class ImportSpringRTSMapFeatures(Operator, ImportHelper):
             options={'HIDDEN'},
             )
 
+    # List of operator properties, the attributes will be assigned
+    # to the class instance from the operator settings before calling.
+    size_x = bpy.props.IntProperty(
+            name="Map Width(x)",
+            description="The Width of the map in SpringRTS map units",
+            min=2, max=64,
+            soft_min=4, soft_max=32,
+            step=2,
+            default=8,
+            )
+
+    size_z = bpy.props.IntProperty(
+            name="Map Length(z)",
+            description="The Length of the map in SpringRTS map units",
+            min=2, max=64,
+            soft_min=4, soft_max=32,
+            step=2,
+            default=8,
+            )
+
     def execute(self, context):
-        print("Import SpringRTS Map Features")
-        return {'FINISHED'}
+        return springrts_map_features_import.load(
+            context, self.filepath, self.size_x, self.size_z)
 
 class ExportSpringRTSMapInfo(Operator, ExportHelper):
     """Save SpringRTS Map Info"""
@@ -299,8 +319,8 @@ def register():
 #    bpy.types.INFO_MT_file_export.append(menu_func_export_mapinfo)
 
     # Register Import Operators
-#    bpy.utils.register_class(ImportSpringRTSMapFeatures)
-#    bpy.types.INFO_MT_file_import.append(menu_func_import_features)
+    bpy.utils.register_class(ImportSpringRTSMapFeatures)
+    bpy.types.INFO_MT_file_import.append(menu_func_import_features)
 #    bpy.utils.register_class(ImportSpringRTSMapInfo)
 #    bpy.types.INFO_MT_file_import.append(menu_func_import_mapinfo)
 
@@ -319,8 +339,8 @@ def unregister():
 #    bpy.types.INFO_MT_file_export.remove(menu_func_export_mapinfo)
 
     # Unregister Import Operators
-#    bpy.utils.unregister_class(ImportSpringRTSMapFeatures)
-#    bpy.types.INFO_MT_file_import.remove(menu_func_import_features)
+    bpy.utils.unregister_class(ImportSpringRTSMapFeatures)
+    bpy.types.INFO_MT_file_import.remove(menu_func_import_features)
 #    bpy.utils.unregister_class(ImportSpringRTSMapInfo)
 #    bpy.types.INFO_MT_file_import.remove(menu_func_import_mapinfo)
 

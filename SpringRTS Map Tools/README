@@ -1,0 +1,10 @@
+= SpringRTS Map Tools=
+= AUTHOR =
+Enetheru, Samuel Nicholas, nicholas.samuel@gmail.com
+
+= Notes =
+== Conversion to and from coordinate space ==
+from Blender's XYZ -> spring needs to use (X)(Z)(-Y)
+from Spring's XYZ -> blender needs to use (X)(-Z)(Y)
+The Custom properties are defined in Spring's Coordinates, so that
+transferring to text will make more sense.

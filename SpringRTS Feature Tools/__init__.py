@@ -161,7 +161,7 @@ class SpringRTSFeature(bpy.types.Panel):
 
         box = layout.box()
         row = box.row()
-        row.prop(sfp, 'indestructable')
+        row.prop(sfp, 'indestructible')
         row.prop(sfp, 'flammable')
         row = box.row()
         row.prop(sfp, 'reclaimable')
@@ -285,8 +285,8 @@ class SpringRTSFeaturePropertyGroup(bpy.types.PropertyGroup):
         description = "The time taken to reclaim this feature.")
 
 # Options
-    indestructable = bpy.props.BoolProperty(
-        name="Indestructable",
+    indestructible = bpy.props.BoolProperty(
+        name="Indestructible",
         description = "Can the feature take damage?")
 
     flammable = bpy.props.BoolProperty(

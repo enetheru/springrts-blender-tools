@@ -27,19 +27,25 @@ bl_info = {
     "description": "export selected objects to features file"
                    "",
     "warning": "",
-    "wiki_url": ""
+    "wiki_url": "https://github.com/enetheru/springrts-blender-tools"
                 "",
     "tracker_url": "",
     "category": "SpringRTS"}
 
 import bpy
 
-def write_some_data(context, filepath, x,z):
+def write_some_data(context, filepath, x,z, mult_x, mult_z ):
     print("running write_some_data...")
     f = open(filepath, 'w', encoding='utf-8')
 
     for obj in bpy.context.selected_objects:
-        print("{ name = '"+ obj.data.name + "', x =", int(obj.location.x * 512 + x * 256), ", z =", int(obj.location.y * -512 + z * 256),", rot = \"" + str(int((obj.rotation_euler.z / 6.141592) * 65536)) + "\"},", file=f )
+        print(
+                "{ name = '" + obj.data.name + "', x =",
+                int( obj.location.x * mult_x * 512 ),
+                ", z =", int( obj.location.y * mult_z * -512 ),
+                ", rot = \"" + str(int((obj.rotation_euler.z / 6.141592) * 65536)) + "\"},",
+                file=f
+                )
 
     f.close()
 
@@ -49,7 +55,7 @@ def write_some_data(context, filepath, x,z):
 # ExportHelper is a helper class, defines filename and
 # invoke() function which calls the file selector.
 from bpy_extras.io_utils import ExportHelper
-from bpy.props import StringProperty, BoolProperty, EnumProperty
+from bpy.props import StringProperty, BoolProperty, EnumProperty, FloatProperty
 from bpy.types import Operator
 
 
@@ -71,23 +77,41 @@ class ExportSomeData(Operator, ExportHelper):
     size_x = bpy.props.IntProperty(
             name="Map Width(x)",
             description="The Width of the map in SpringRTS map units",
-            min=2, max=64,
+            min=2, max=128,
             soft_min=4, soft_max=32,
             step=2,
-            default=8,
+            default=2,
             )
 
     size_z = bpy.props.IntProperty(
             name="Map Length(z)",
             description="The Length of the map in SpringRTS map units",
-            min=2, max=64,
+            min=2, max=128,
             soft_min=4, soft_max=32,
             step=2,
-            default=8,
+            default=2,
+            )
+
+    mult_x = bpy.props.FloatProperty(
+            name="unit multiplier",
+            description="how many spring map units a blender map unit is",
+            min=0, max=100,
+            soft_min=0.125, soft_max=32,
+            step=0.125,
+            default=1,
+            )
+
+    mult_z = bpy.props.FloatProperty(
+            name="unit multiplier",
+            description="how many spring map units a blender map unit is",
+            min=0, max=100,
+            soft_min=0.125, soft_max=32,
+            step=0.125,
+            default=1,
             )
 
     def execute(self, context):
-        return write_some_data(context, self.filepath, self.size_x, self.size_z)
+        return write_some_data(context, self.filepath, self.size_x, self.size_z, self.mult_z, self.mult_z)
 
 
 # Only needed if you want to add into a dynamic menu

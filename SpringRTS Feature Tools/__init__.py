@@ -27,20 +27,16 @@ bl_info = {
     "tracker_url": "",
     "category": "SpringRTS"}
 
-if "bpy" in locals():
-    import imp
-    if "springrts_feature_bits" in locals():
-        imp.reload(stringrts_feature_bits)
-    if "springrts_feature_import" in locals():
-        imp.reload(stringrts_feature_import)
-    if "springrts_feature_export" in locals():
-        imp.reload(stringrts_feature_export)
-
 import bpy, os, re
 from bpy_extras.io_utils import ExportHelper,ImportHelper
 from bpy.props import StringProperty, BoolProperty, EnumProperty
 from bpy.types import Operator
-from . import springrts_feature_bits, springrts_feature_import, springrts_feature_export
+from . import (
+    springrts_feature_bits,
+    springrts_feature_import,
+    springrts_feature_export,
+    springrts_feature_presets
+)
 
 #############
 # Operators #
@@ -422,10 +418,9 @@ class SpringRTSFeaturePropertyGroup(bpy.types.PropertyGroup):
 
     preset = bpy.props.EnumProperty(
         name = "Preset",
-        items = (('none',"None","No Changes"),
-            ('tree',"Tree","Trees, between 32 and 64 units high or there abouts."),),
+        items = springrts_feature_presets.presets,
         description = "Feature Preset",
-        update = springrts_feature_bits.preset_chosen)
+        update = springrts_feature_presets.preset_choose)
 
 
 ###################################################

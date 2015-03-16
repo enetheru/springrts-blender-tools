@@ -231,6 +231,7 @@ def update_occlusion_volume(self, context):
         object.location.z = sfp.midpos[1]
 
 def create_SME_objects(self, context):
+    active = bpy.context.active_object
     # Get spring feature properties
     sfp = bpy.context.object.sfp
 
@@ -328,32 +329,10 @@ def create_SME_objects(self, context):
         for lock in object.lock_location:
             lock=True
 
+    bpy.ops.object.select_all(action='DESELECT')
+    bpy.context.scene.objects.active = active
+    active.select = True
+
     return {'FINISHED'}
 
-def preset_chosen(self, context):
-   #set attributes based on which preset is chosen
-   obj = bpy.context.object
-   sfp = bpy.context.object.sfp
-   h = obj.dimensions.z
 
-   if(sfp.preset == 'tree'):
-      sfp.damage = h * 1.875 - 40
-      sfp.metal = 1
-      sfp.energy = h * 1.25 - 30
-      sfp.crushResistance = h * 1.25 - 20
-      sfp.reclaimTime = sfp.metal + sfp.energy * 4
-      sfp.indestructable = False
-      sfp.flammable = True
-      sfp.reclaimable = True
-      sfp.autoReclaimable = True
-      sfp.featureDead = ''
-      sfp.smokeTime = h * 1000
-      sfp.resurrectable = 'no'
-      sfp.upright = True
-      sfp.floating = False
-      sfp.geothermal = False
-      sfp.noSelect = False
-      sfp.blocking = True
-      sfp.footprintX = 1
-      sfp.footprintZ = 1
-      sfp.collisionVolumeType = 'SME_cylY'

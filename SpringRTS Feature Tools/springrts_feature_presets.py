@@ -3,7 +3,7 @@ import bpy
 presets = [
     ('none', "None", "No Changes"),
     ('tree', "Tree", "Trees, between 32 and 64 units high or there abouts."),
-    ('rock', "Rock", "Rocks, generic rocks.")
+    ('geo_terrain', "Geometry", "feature cliffs and the like")
 ]
 
 def preset_choose(self, context):
@@ -34,3 +34,26 @@ def preset_choose(self, context):
       sfp.footprintX = 1
       sfp.footprintZ = 1
       sfp.collisionVolumeType = 'SME_cylY'
+
+   if(sfp.preset == 'geo_terrain'):
+      sfp.damage = 0
+      sfp.metal = 0
+      sfp.energy = 0
+      sfp.crushResistance = 0
+      sfp.reclaimTime = 0
+      sfp.indestructable = True
+      sfp.flammable = False
+      sfp.reclaimable = False
+      sfp.autoReclaimable = False
+      sfp.featureDead = ''
+      sfp.smokeTime = 0
+      sfp.resurrectable = 'no'
+      sfp.upright = True
+      sfp.floating = False
+      sfp.geothermal = False
+      sfp.noSelect = True
+      sfp.blocking = False
+      sfp.footprintX = 1
+      sfp.footprintZ = 1
+      sfp.collisionVolumeType = 'SME_cylY'
+

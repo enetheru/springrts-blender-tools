@@ -38,6 +38,14 @@ from mathutils import Vector
 # Functions #
 #############
 
+def render_settings(scene):
+    scene.display_settings.display_device = 'None'
+    output = scene.render.image_settings
+    output.file_format = 'PNG'
+    output.color_depth = '16'
+    output.color_mode = 'RGBA'
+    return
+
 #############
 # Operators #
 #############
@@ -49,6 +57,7 @@ class rts_tile_camera_setup(bpy.types.Operator):
     def execute(self, context):
         scn = context.scene
         props = context.scene.rts_tile_props
+        render_settings(context.scene)
 
         try:
             roam = bpy.data.objects[props['roam']]
@@ -120,6 +129,8 @@ class rts_tile_roam_export_height(bpy.types.Operator):
     def execute(self, context):
         props = context.scene.rts_tile_props
 
+        render_settings(context.scene)
+
         try:
             props['floor']
         except:
@@ -139,13 +150,18 @@ class rts_tile_roam_export_height(bpy.types.Operator):
                 float=True)
 
         img = bpy.data.images['roam']
+        img.colorspace_settings.name = 'Linear'
+        img.use_view_as_render = True
 
         roam = bpy.data.objects[props['roam']]
         i = 0
         for v in roam.data.vertices:
-            img.pixels[i] = (v.co[2] + (ceiling - floor) / 2) / (ceiling - floor)
+            img.pixels[i] = (v.co[2] - floor) / float(ceiling - floor)
+            img.pixels[i+1] = (v.co[2] - floor) / float(ceiling - floor)
+            img.pixels[i+2] = (v.co[2] - floor) / float(ceiling - floor)
             i = i + 4
         
+        img.save_render("height.png")
         return {'FINISHED'}
 
 class rts_tile_roam_export_type(bpy.types.Operator):
